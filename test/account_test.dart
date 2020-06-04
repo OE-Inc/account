@@ -23,7 +23,7 @@ void main() {
     print(sprintf("%d,%s", [11, "haha"]));
   });
 
-  test("description", () async {
+  test("dio", () async {
     Dio dio = Dio();
     var res = await dio.get("http://www.baidu.com");
     print(res);
@@ -34,11 +34,11 @@ void main() {
     print(map);
   });
   
-  test("Json null", (){
+  test("json null", (){
     print(JsonEncoder().convert(Env()));
   });
 
-  test("Login", () async {
+  test("login", () async {
     var info = LoginInfo();
     info.password = "123456";
     var rsp = await AccountProcessor.processor.login("+86-18825171975", info);
@@ -46,11 +46,16 @@ void main() {
 
   test("register", () async {
     var info = RegisterInfo();
+    info.env.result = "123456"; //owner请求的验证码
     var rsp = await AccountProcessor.processor.register("+86-18825171975", info).catchError((error) => print(error));
     print("done");
   });
 
-  test("Account serlize", () {
+  test("refresh token", () async {
+    await AccountProcessor.processor.refreshToken("loginId", tokenExpired: true).catchError((e) => print(e));
+  });
+
+  test("account serlize", () {
     var accounts = {
       "1": Account(loginId: "1"),
       "2": Account(loginId: "2"),

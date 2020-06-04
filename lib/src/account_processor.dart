@@ -239,6 +239,7 @@ class AccountProcessor {
       if(tokenExpired == true) {
         _bus?.fire(TokenExpired(loginId));
       }
+      throw error;
     });
   }
 
