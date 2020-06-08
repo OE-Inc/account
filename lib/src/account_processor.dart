@@ -52,10 +52,10 @@ class AccountProcessor {
   }
 
   /// 请求发送验证码流程, 返回值可能是：
-  ///   Map<String, String>: 请求成功，包含"rspCode"和"expiresIn"
+  ///   Map<String, dynamic>: 请求成功，包含"rspCode"、"expiresIn"和"envId"
   ///
   /// 失败则会抛出异常
-  Future<Map<String, int>> ownerValidate(String authTo, {String packageId}) async {
+  Future<Map<String, dynamic>> ownerValidate(String authTo, {String packageId}) async {
 
     var params = {
       "authTo": authTo,
@@ -76,11 +76,18 @@ class AccountProcessor {
         throw HttpResponse.NO_RSP_CODE;
       }
 
-      var expiresIn = rsp.response["expiresIn"];
+      var env = rsp.response["env"];
+      if(env == null || !(env is Map<String, dynamic>)) {
+        throw ErrorInfo(NetworkLocal.RSP_ERROR, "", "");
+      }
+
+      var expiresIn = env["expiresIn"];
+      var envId = env["envId"];
       if(expiresIn is int && expiresIn > 0) {
         return {
           "rspCode": rspCode,
-          "expiresIn": expiresIn
+          "expiresIn": expiresIn,
+          "envId": envId == null? Account.terminalId : envId
         };
       }
 
