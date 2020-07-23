@@ -12,3 +12,4 @@ export 'src/form/user_info.dart';
 export 'src/account.dart';
 export 'src/constants.dart';
 export 'src/events.dart';
+export 'src/account_processor.dart';

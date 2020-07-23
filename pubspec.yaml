@@ -1,6 +1,6 @@
 name: account
-description: A new Flutter package project.
-version: 0.0.1
+description: Account project.
+version: 1.0.1
 author: OeCore
 homepage: https://www.oecore.com
 
@@ -10,18 +10,18 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  json_annotation: 3.0.1
-  uuid: 2.0.4
-  sprintf: 4.0.2
-  futils:
-    path: ../futils
-  event_bus: 1.1.1
+  json_annotation: ^3.0.1
+  uuid: ^2.0.4
+  sprintf: ^4.0.2
+  utils:
+    git: git@projects.oecore.com:libs.dart/utils.git
+  event_bus: ^1.1.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  json_serializable: 3.3.0
-  build_runner: 1.10.0
+  json_serializable: ^3.3.0
+  build_runner: ^1.10.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

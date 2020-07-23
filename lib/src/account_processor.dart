@@ -9,7 +9,7 @@ import 'package:account/src/form/token_info.dart';
 import 'package:account/src/form/user_info.dart';
 import 'package:account/src/urls.dart';
 import 'package:event_bus/event_bus.dart';
-import 'package:futils/futils.dart';
+import 'package:utils/utils.dart';
 
 import 'form/avatar_update_info.dart';
 import 'form/register_info.dart';
@@ -32,6 +32,12 @@ class AccountProcessor {
   Map<String, Account> get accounts => Map.from(_accounts);
 
   String get savingString => JsonEncoder().convert(_accounts.map((key, value) => MapEntry(key, value.toJson())));
+
+  @deprecated
+  void addAccount(Account userInfo) {
+    _accounts = Map<String, Account>();
+    _accounts[userInfo.loginId] = userInfo;
+  }
 
   void restore(String json) {
     Map<String, dynamic> map = JsonDecoder().convert(json);
@@ -78,7 +84,7 @@ class AccountProcessor {
 
       var env = rsp.response["env"];
       if(env == null || !(env is Map<String, dynamic>)) {
-        throw ErrorInfo(NetworkLocal.RSP_ERROR, "", "");
+        throw ErrorInfo(RspCode.NetworkLocal.RSP_ERROR, "", "");
       }
 
       var expiresIn = env["expiresIn"];
@@ -118,7 +124,7 @@ class AccountProcessor {
         throw ErrorInfo(HttpResponse.NO_RSP_CODE, "", "");
       }
 
-      if(rspCode == Base.OK) {
+      if(rspCode == RspCode.Base.OK) {
         return;
       }
 
@@ -169,7 +175,7 @@ class AccountProcessor {
         throw ErrorInfo(HttpResponse.NO_RSP_CODE, "", "") ;
       }
 
-      if(rspCode == Base.OK) {
+      if(rspCode == RspCode.Base.OK) {
         Account account = _get(loginId);
         account.tokenInfo = TokenInfo.fromJson(rsp.response);
         account.userInfo = UserInfo.fromJson(rsp.response);
@@ -178,11 +184,11 @@ class AccountProcessor {
         var userId = account.tokenInfo?.userId;
 
         if(token == null || token.isEmpty) {
-          return NetworkLocal.RSP_INVALID_TOKEN;
+          return RspCode.NetworkLocal.RSP_INVALID_TOKEN;
         }
 
         if(userId == null || userId.isEmpty) {
-          throw ErrorInfo(NetworkLocal.RSP_INVALID_USERID, "", "");
+          throw ErrorInfo(RspCode.NetworkLocal.RSP_INVALID_USERID, "", "");
         }
 
         var loginUtcBack = account.tokenInfo.tokens.loginUtc;
@@ -205,7 +211,7 @@ class AccountProcessor {
   Future<void> logout(String loginId) async {
     var account = _accounts[loginId];
     if(account == null) {
-      throw ErrorInfo(NetworkLocal.NOT_LOGIN, "", "");
+      throw ErrorInfo(RspCode.NetworkLocal.NOT_LOGIN, "", "");
     }
 
     if(account.isLocalUser) {
@@ -231,7 +237,7 @@ class AccountProcessor {
         throw ErrorInfo(HttpResponse.NO_RSP_CODE, "", "");
       }
 
-      if(rspCode == Base.OK) {
+      if(rspCode == RspCode.Base.OK) {
         return;
       }
 
@@ -253,11 +259,11 @@ class AccountProcessor {
   Future<void> _refreshToken(String loginId, { bool tokenExpired }) async {
     var account = _accounts[loginId];
     if(account == null) {
-      throw ErrorInfo(NetworkLocal.NOT_LOGIN, "", "");
+      throw ErrorInfo(RspCode.NetworkLocal.NOT_LOGIN, "", "");
     }
 
     if(account.isLocalUser) {
-      throw ErrorInfo(NetworkLocal.NOT_LOGIN, "", "");
+      throw ErrorInfo(RspCode.NetworkLocal.NOT_LOGIN, "", "");
     }
 
     if(tokenExpired == null) {
@@ -281,11 +287,11 @@ class AccountProcessor {
         throw ErrorInfo(HttpResponse.NO_RSP_CODE, "", "");
       }
 
-      if(rspCode == Base.OK) {
+      if(rspCode == RspCode.Base.OK) {
         var tokenInfo = TokenInfo.fromJson(rsp.response);
         var accessToken = tokenInfo.tokens?.accessToken;
         if(accessToken == null || accessToken.isEmpty) {
-          throw ErrorInfo(NetworkLocal.RSP_INVALID_TOKEN, "", "");
+          throw ErrorInfo(RspCode.NetworkLocal.RSP_INVALID_TOKEN, "", "");
         }
 
         tokenInfo.userId = account.userId;
@@ -302,7 +308,7 @@ class AccountProcessor {
 
   Future<UserInfo> pullUserInfo(Account account, String userId) async {
     if(account == null || account.isLocalUser) {
-      throw ErrorInfo(NetworkLocal.NOT_LOGIN, "", "");
+      throw ErrorInfo(RspCode.NetworkLocal.NOT_LOGIN, "", "");
     }
 
     var request = HttpRequest(
@@ -321,7 +327,7 @@ class AccountProcessor {
         throw ErrorInfo(HttpResponse.NO_RSP_CODE, "", "");
       }
 
-      if(rspCode == Base.OK) {
+      if(rspCode == RspCode.Base.OK) {
         return UserInfo.fromJson(rsp.response);
       }
 
@@ -347,7 +353,7 @@ class AccountProcessor {
         throw ErrorInfo(HttpResponse.NO_RSP_CODE, "", "");
       }
 
-      if(rspCode == Base.OK) {
+      if(rspCode == RspCode.Base.OK) {
         _bus?.fire(UserInfoUpdated(userId));
         return;
       }
@@ -373,7 +379,7 @@ class AccountProcessor {
         throw ErrorInfo(HttpResponse.NO_RSP_CODE, "", "");
       }
 
-      if(rspCode == Base.OK) {
+      if(rspCode == RspCode.Base.OK) {
         var avatarUri = rsp.response["avatarUri"];
         if(avatarUri != null && avatarUri is String) {
           _accounts.entries.firstWhere(
@@ -408,7 +414,7 @@ class AccountProcessor {
         throw ErrorInfo(HttpResponse.NO_RSP_CODE, "", "");
       }
 
-      if(rspCode == Base.OK) {
+      if(rspCode == RspCode.Base.OK) {
         return;
       }
 
@@ -437,7 +443,7 @@ class AccountProcessor {
         throw ErrorInfo(HttpResponse.NO_RSP_CODE, "", "");
       }
 
-      if(rspCode == Base.OK) {
+      if(rspCode == RspCode.Base.OK) {
         return;
       }
 
