@@ -38,12 +38,6 @@ class AccountProcessor {
     "accounts": _accounts.map((key, value) => MapEntry(key, value.toJson())),
   });
 
-  @deprecated
-  void addAccount(Account userInfo) {
-    _accounts = Map<String, Account>();
-    _accounts[userInfo.loginId] = userInfo;
-  }
-
   void restore(String json) {
     Map<String, dynamic> map = JsonDecoder().convert(json);
     lastLoginId = map['lastLoginId'];
