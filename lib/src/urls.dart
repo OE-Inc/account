@@ -34,4 +34,10 @@ class UrlFactory {
   static String _makeUrl(String relative, var args) {
     return baseUrl + sprintf(relative, args);
   }
+
+
+  static void setServerUrl(String url) {
+    baseUrl = url;
+  }
+
 }

@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:utils/utils.dart';
 import 'package:uuid/uuid.dart';
 
 import 'constants.dart';
@@ -15,13 +16,15 @@ class Account {
   @JsonKey(disallowNullValue: true)
   String loginId;
   @JsonKey(disallowNullValue: true)
-  bool isLogin;
+  bool isLogin = false;
   UserInfo userInfo = UserInfo();
   TokenInfo tokenInfo = TokenInfo();
 
   Account({this.loginId});
 
-  bool get isReady => isLogin && STAT_NORMAL == userInfo.loginInfo.status;
+  bool get isValid => utc() - tokenInfo.tokens.loginUtc <= tokenInfo.tokens.expiresIn;
+
+  bool get isReady => isLogin != false && STAT_NORMAL == userInfo.loginInfo.status;
 
   String get userId => tokenInfo.userId;
 
@@ -36,4 +39,9 @@ class Account {
   Map<String, dynamic> toJson() => _$AccountToJson(this);
 
   factory Account.fromJson(Map<String, dynamic> json) => _$AccountFromJson(json);
+
+  @override
+  String toString() {
+    return "$runtimeType { loginId: $loginId, isLogin: $isLogin, userInfo: ${userInfo.toJson()}, tokenInfo: ${tokenInfo.toJson()}, }";
+  }
 }

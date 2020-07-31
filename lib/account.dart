@@ -13,3 +13,4 @@ export 'src/account.dart';
 export 'src/constants.dart';
 export 'src/events.dart';
 export 'src/account_processor.dart';
+export 'src/urls.dart';

@@ -29,9 +29,14 @@ class AccountProcessor {
 
   set eventBus(EventBus bus) => _bus = bus;
 
+  String lastLoginId;
+
   Map<String, Account> get accounts => Map.from(_accounts);
 
-  String get savingString => JsonEncoder().convert(_accounts.map((key, value) => MapEntry(key, value.toJson())));
+  String get savingString => JsonEncoder().convert({
+    "lastLoginId": lastLoginId,
+    "accounts": _accounts.map((key, value) => MapEntry(key, value.toJson())),
+  });
 
   @deprecated
   void addAccount(Account userInfo) {
@@ -41,7 +46,9 @@ class AccountProcessor {
 
   void restore(String json) {
     Map<String, dynamic> map = JsonDecoder().convert(json);
-    map.forEach((key, value) {
+    lastLoginId = map['lastLoginId'];
+
+    map['accounts']?.forEach((key, value) {
       _accounts[key] = Account.fromJson(value);
     });
   }
@@ -155,6 +162,8 @@ class AccountProcessor {
       return loginLocalUser(loginId);
     }
 
+    lastLoginId = loginId;
+
     if(loginInfo.clientId == null) {
       loginInfo.clientId = Account.clientId;
     }
@@ -195,6 +204,8 @@ class AccountProcessor {
         if(loginUtcBack == null || loginUtcBack < loginUtc) {
           account.tokenInfo.tokens.loginUtc = loginUtc;
         }
+
+        account.isLogin = true;
 
         _bus?.fire(LoginSuccess(loginId));
 
@@ -259,11 +270,11 @@ class AccountProcessor {
   Future<void> _refreshToken(String loginId, { bool tokenExpired }) async {
     var account = _accounts[loginId];
     if(account == null) {
-      throw ErrorInfo(RspCode.NetworkLocal.NOT_LOGIN, "", "");
+      throw ErrorInfo(RspCode.NetworkLocal.NOT_LOGIN, "account not in processor", "");
     }
 
     if(account.isLocalUser) {
-      throw ErrorInfo(RspCode.NetworkLocal.NOT_LOGIN, "", "");
+      throw ErrorInfo(RspCode.NetworkLocal.NOT_LOGIN, "account is local user", "");
     }
 
     if(tokenExpired == null) {
@@ -284,14 +295,14 @@ class AccountProcessor {
     if(rsp.isSuccessful) {
       var rspCode = rsp.response["rspCode"];
       if(rspCode == null || !(rspCode is int)) {
-        throw ErrorInfo(HttpResponse.NO_RSP_CODE, "", "");
+        throw ErrorInfo(HttpResponse.NO_RSP_CODE, "no rsp code", "");
       }
 
       if(rspCode == RspCode.Base.OK) {
         var tokenInfo = TokenInfo.fromJson(rsp.response);
         var accessToken = tokenInfo.tokens?.accessToken;
         if(accessToken == null || accessToken.isEmpty) {
-          throw ErrorInfo(RspCode.NetworkLocal.RSP_INVALID_TOKEN, "", "");
+          throw ErrorInfo(RspCode.NetworkLocal.RSP_INVALID_TOKEN, "token invalid in rsp", "");
         }
 
         tokenInfo.userId = account.userId;
