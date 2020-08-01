@@ -77,3 +77,4 @@ build/
 **/generated/
 **/.generated/
 **/*.g.dart
+!lib/src/**/*.g.dart
