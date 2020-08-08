@@ -5,7 +5,7 @@ import '../jsonable.dart';
 part 'error_info.g.dart';
 
 @JsonSerializable()
-class ErrorInfo implements Jsonable, Exception {
+class ErrorInfo extends Error implements Jsonable {
   int rspCode = 99999999;
   @JsonKey(disallowNullValue: true)
   String reason = "";
@@ -20,6 +20,6 @@ class ErrorInfo implements Jsonable, Exception {
   Map<String, dynamic> toJson() => _$ErrorInfoToJson(this);
 
   @override
-  String toString() => toJson().toString();
+  String toString() => "$runtimeType ${toJson().toString()}\n$stackTrace";
 }
 
