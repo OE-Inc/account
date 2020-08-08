@@ -254,7 +254,7 @@ class AccountProcessor {
 
   Future<void> refreshToken(String loginId, { bool tokenExpired }) {
     return _refreshToken(loginId, tokenExpired: tokenExpired).catchError((error) {
-      if(tokenExpired == true) {
+      if(tokenExpired == true || (error is ErrorInfo && error.rspCode == RspCode.Base.NOT_FOUND)) {
         _bus?.fire(TokenExpired(loginId));
       }
       throw error;
