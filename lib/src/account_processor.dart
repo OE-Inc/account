@@ -333,7 +333,14 @@ class AccountProcessor {
       }
 
       if(rspCode == RspCode.Base.OK) {
-        return UserInfo.fromJson(rsp.response);
+        var userInfo = UserInfo.fromJson(rsp.response);
+
+        Account account = _get(loginId);
+        if (account != null)
+          account.userInfo = userInfo;
+
+        _bus?.fire(UserInfoUpdated(userId));
+        return userInfo;
       }
 
       throw ErrorInfo.fromJson(rsp.response);
