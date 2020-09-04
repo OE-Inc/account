@@ -249,6 +249,7 @@ class AccountProcessor {
       }
 
       if(rspCode == RspCode.Base.OK) {
+        _bus?.fire(LogoutSuccess(loginId));
         return;
       }
 
