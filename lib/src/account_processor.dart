@@ -49,6 +49,12 @@ class AccountProcessor {
 
   Account remove(String loginId) => _accounts.remove(loginId);
 
+  Account getByLoginId(String loginId) => _get(loginId);
+
+  Account getByUserId(String userId) {
+    return _accounts.values.firstWhere((a) => a.userId == userId, orElse: () => null);
+  }
+
   Account _get(String loginId) {
     Account account = _accounts[loginId];
     if(account == null) {
@@ -335,7 +341,7 @@ class AccountProcessor {
       if(rspCode == RspCode.Base.OK) {
         var userInfo = UserInfo.fromJson(rsp.response);
 
-        Account account = _get(loginId);
+        Account account = getByUserId(userId);
         if (account != null)
           account.userInfo = userInfo;
 
