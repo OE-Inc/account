@@ -249,6 +249,7 @@ class AccountProcessor {
       }
 
       if(rspCode == RspCode.Base.OK) {
+        remove(loginId);
         _bus?.fire(LogoutSuccess(loginId));
         return;
       }
@@ -309,6 +310,8 @@ class AccountProcessor {
         tokenInfo.userId = account.userId;
         tokenInfo.tokens.loginUtc = loginUtc;
         account.tokenInfo = tokenInfo;
+
+        _bus?.fire(TokenRefreshed(loginId));
         return;
       }
 
