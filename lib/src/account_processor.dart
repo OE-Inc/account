@@ -49,6 +49,12 @@ class AccountProcessor {
 
   Account remove(String loginId) => _accounts.remove(loginId);
 
+  Account getByLoginId(String loginId) => _get(loginId);
+
+  Account getByUserId(String userId) {
+    return _accounts.values.firstWhere((a) => a.userId == userId, orElse: () => null);
+  }
+
   Account _get(String loginId) {
     Account account = _accounts[loginId];
     if(account == null) {
@@ -243,6 +249,7 @@ class AccountProcessor {
       }
 
       if(rspCode == RspCode.Base.OK) {
+        remove(loginId);
         _bus?.fire(LogoutSuccess(loginId));
         return;
       }
@@ -303,6 +310,8 @@ class AccountProcessor {
         tokenInfo.userId = account.userId;
         tokenInfo.tokens.loginUtc = loginUtc;
         account.tokenInfo = tokenInfo;
+
+        _bus?.fire(TokenRefreshed(loginId));
         return;
       }
 
@@ -334,7 +343,14 @@ class AccountProcessor {
       }
 
       if(rspCode == RspCode.Base.OK) {
-        return UserInfo.fromJson(rsp.response);
+        var userInfo = UserInfo.fromJson(rsp.response);
+
+        Account account = getByUserId(userId);
+        if (account != null)
+          account.userInfo = userInfo;
+
+        _bus?.fire(UserInfoUpdated(userId));
+        return userInfo;
       }
 
       throw ErrorInfo.fromJson(rsp.response);
