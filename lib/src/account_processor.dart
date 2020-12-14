@@ -151,6 +151,8 @@ class AccountProcessor {
     local.tokenInfo.userId = LOCAL_USER_ID;
     local.tokenInfo.tokens.accessToken = INVALID_TOKEN;
     local.tokenInfo.tokens.refreshToken = INVALID_TOKEN;
+    local.tokenInfo.tokens.loginUtc = DateTime.now().millisecondsSinceEpoch;
+    local.tokenInfo.tokens.expiresIn = 0xFFFFFFFFFFFF;
 
     _accounts[LOCAL_LOGIN_ID] = local;
 

@@ -28,7 +28,7 @@ packages:
       name: async
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.4.1"
+    version: "2.4.2"
   better_log:
     dependency: transitive
     description:
@@ -108,6 +108,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "7.1.0"
+  characters:
+    dependency: transitive
+    description:
+      name: characters
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.0"
   charcode:
     dependency: transitive
     description:
@@ -142,7 +149,35 @@ packages:
       name: collection
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.14.12"
+    version: "1.14.13"
+  connectivity:
+    dependency: transitive
+    description:
+      name: connectivity
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.4.9+3"
+  connectivity_for_web:
+    dependency: transitive
+    description:
+      name: connectivity_for_web
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.3.1+2"
+  connectivity_macos:
+    dependency: transitive
+    description:
+      name: connectivity_macos
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.1.0+5"
+  connectivity_platform_interface:
+    dependency: transitive
+    description:
+      name: connectivity_platform_interface
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.6"
   convert:
     dependency: transitive
     description:
@@ -312,13 +347,20 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.11.4"
+  lpinyin:
+    dependency: transitive
+    description:
+      name: lpinyin
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.9"
   matcher:
     dependency: transitive
     description:
       name: matcher
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.12.6"
+    version: "0.12.8"
   meta:
     dependency: transitive
     description:
@@ -333,6 +375,15 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.9.6+3"
+  native_http:
+    dependency: transitive
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: a214065069a743d1f3877a255e0e354d3cfa9fa6
+      url: "https://github.com/w-rui/native_http.git"
+    source: git
+    version: "1.0.0+5"
   node_interop:
     dependency: transitive
     description:
@@ -354,6 +405,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.9.3"
+  package_info:
+    dependency: transitive
+    description:
+      name: package_info
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.4.3"
   path:
     dependency: transitive
     description:
@@ -368,6 +426,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.9.0"
+  plugin_platform_interface:
+    dependency: transitive
+    description:
+      name: plugin_platform_interface
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.3"
   pool:
     dependency: transitive
     description:
@@ -512,7 +577,7 @@ packages:
       name: stack_trace
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.9.3"
+    version: "1.9.5"
   stream:
     dependency: transitive
     description:
@@ -561,7 +626,7 @@ packages:
       name: test_api
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.2.15"
+    version: "0.2.17"
   timing:
     dependency: transitive
     description:
@@ -575,14 +640,16 @@ packages:
       name: typed_data
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.1.6"
+    version: "1.2.0"
   utils:
     dependency: "direct main"
     description:
-      path: "../utils"
-      relative: true
-    source: path
-    version: "0.0.1"
+      path: "."
+      ref: HEAD
+      resolved-ref: eb79f1c5318127f26984bad03ad4ed0432862739
+      url: "git@projects.oecore.com:libs.dart/utils.git"
+    source: git
+    version: "2.0.1"
   uuid:
     dependency: "direct main"
     description:
@@ -619,5 +686,5 @@ packages:
     source: hosted
     version: "2.2.1"
 sdks:
-  dart: ">=2.8.0 <3.0.0"
+  dart: ">=2.9.0-14.0.dev <3.0.0"
   flutter: ">=1.12.13+hotfix.5 <2.0.0"
