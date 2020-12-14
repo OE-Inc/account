@@ -148,7 +148,9 @@ class AccountProcessor {
       local = Account(loginId: LOCAL_LOGIN_ID);
     }
     local.userInfo.baseInfo.nickName = localName;
+    local.userInfo.loginInfo.status = STAT_NORMAL;
     local.tokenInfo.userId = LOCAL_USER_ID;
+    local.isLogin = true;
     local.tokenInfo.tokens.accessToken = INVALID_TOKEN;
     local.tokenInfo.tokens.refreshToken = INVALID_TOKEN;
     local.tokenInfo.tokens.loginUtc = DateTime.now().millisecondsSinceEpoch;
