@@ -64,6 +64,26 @@ class AccountProcessor {
     return account;
   }
 
+  Future<HttpResponse> execute(HttpRequest request) async {
+    var rsp = await HttpEngine.engine.execute(request);
+    var r = rsp.response ?? {};
+
+    if(!rsp.isSuccessful) {
+      throw ErrorInfo(rsp.code, r['reason'], r['errDispMsg']);
+    }
+
+    var rspCode = r["rspCode"];
+    if(rspCode == null || !(rspCode is int)) {
+      throw ErrorInfo(HttpResponse.NO_RSP_CODE, r['reason'], r['errDispMsg']);
+    }
+
+    if (rspCode != RspCode.Base.OK) {
+      throw ErrorInfo.fromJson(rsp.response);
+    }
+
+    return rsp;
+  }
+
   /// 请求发送验证码流程, 返回值可能是：
   ///   Map<String, dynamic>: 请求成功，包含"rspCode"、"expiresIn"和"envId"
   ///
@@ -82,33 +102,25 @@ class AccountProcessor {
       UrlFactory.getOwnerUrl(Account.terminalId),
       queryParams: params
     );
-    var rsp = await HttpEngine.engine.execute(request);
-    if(rsp.isSuccessful) {
-      var rspCode = rsp.response["rspCode"];
-      if(rspCode == null || !(rspCode is int)) {
-        throw HttpResponse.NO_RSP_CODE;
-      }
+    var rsp = await execute(request);
 
-      var env = rsp.response["env"];
-      if(env == null || !(env is Map<String, dynamic>)) {
-        throw ErrorInfo(RspCode.NetworkLocal.RSP_ERROR, "$env", "");
-      }
-
-      var expiresIn = env["expiresIn"];
-      var envId = env["envId"];
-      if(expiresIn is int && expiresIn > 0) {
-        return {
-          "rspCode": rspCode,
-          "expiresIn": expiresIn,
-          "envId": envId == null? Account.terminalId : envId
-        };
-      }
-
-      throw ErrorInfo.fromJson(rsp.response);
-
-    } else {
-      throw ErrorInfo(rsp.code, "", "");
+    var rspCode = rsp.response["rspCode"];
+    var env = rsp.response["env"];
+    if(env == null || !(env is Map<String, dynamic>)) {
+      throw ErrorInfo(RspCode.NetworkLocal.RSP_ERROR, "$env", "");
     }
+
+    var expiresIn = env["expiresIn"];
+    var envId = env["envId"];
+    if(expiresIn is int && expiresIn > 0) {
+      return {
+        "rspCode": rspCode,
+        "expiresIn": expiresIn,
+        "envId": envId == null? Account.terminalId : envId
+      };
+    }
+
+    throw ErrorInfo.fromJson(rsp.response);
   }
 
   /// 注册流程, 失败抛出异常
@@ -123,23 +135,7 @@ class AccountProcessor {
       data: registerInfo.toJson()
     );
 
-    var rsp = await HttpEngine.engine.execute(request);
-
-    if(rsp.isSuccessful) {
-      var rspCode = rsp.response["rspCode"];
-      if(rspCode == null || !(rspCode is int)) {
-        throw ErrorInfo(HttpResponse.NO_RSP_CODE, "", "");
-      }
-
-      if(rspCode == RspCode.Base.OK) {
-        return;
-      }
-
-      throw ErrorInfo.fromJson(rsp.response);
-
-    } else {
-      throw ErrorInfo(rsp.code, "", "");
-    }
+    await execute(request);
   }
 
   void loginLocalUser(String localName) {
@@ -180,47 +176,31 @@ class AccountProcessor {
     );
 
     var loginUtc = DateTime.now().millisecondsSinceEpoch;
-    var rsp = await HttpEngine.engine.execute(request);
+    var rsp = await execute(request);
 
-    if(rsp.isSuccessful) {
-      var rspCode = rsp.response["rspCode"];
-      if(rspCode == null || !(rspCode is int)) {
-        throw ErrorInfo(HttpResponse.NO_RSP_CODE, "", "") ;
-      }
+    Account account = _get(loginId);
+    account.tokenInfo = TokenInfo.fromJson(rsp.response);
+    account.userInfo = UserInfo.fromJson(rsp.response);
 
-      if(rspCode == RspCode.Base.OK) {
-        Account account = _get(loginId);
-        account.tokenInfo = TokenInfo.fromJson(rsp.response);
-        account.userInfo = UserInfo.fromJson(rsp.response);
+    var token = account.tokenInfo?.tokens?.accessToken;
+    var userId = account.tokenInfo?.userId;
 
-        var token = account.tokenInfo?.tokens?.accessToken;
-        var userId = account.tokenInfo?.userId;
-
-        if(token == null || token.isEmpty) {
-          return RspCode.NetworkLocal.RSP_INVALID_TOKEN;
-        }
-
-        if(userId == null || userId.isEmpty) {
-          throw ErrorInfo(RspCode.NetworkLocal.RSP_INVALID_USERID, "", "");
-        }
-
-        var loginUtcBack = account.tokenInfo.tokens.loginUtc;
-        if(loginUtcBack == null || loginUtcBack < loginUtc) {
-          account.tokenInfo.tokens.loginUtc = loginUtc;
-        }
-
-        account.isLogin = true;
-
-        _bus?.fire(LoginSuccess(loginId));
-
-        return;
-      } else {
-        throw ErrorInfo.fromJson(rsp.response);
-      }
-
-    } else {
-      throw ErrorInfo(rsp.code, "", "");
+    if(token == null || token.isEmpty) {
+      return RspCode.NetworkLocal.RSP_INVALID_TOKEN;
     }
+
+    if(userId == null || userId.isEmpty) {
+      throw ErrorInfo(RspCode.NetworkLocal.RSP_INVALID_USERID, "", "");
+    }
+
+    var loginUtcBack = account.tokenInfo.tokens.loginUtc;
+    if(loginUtcBack == null || loginUtcBack < loginUtc) {
+      account.tokenInfo.tokens.loginUtc = loginUtc;
+    }
+
+    account.isLogin = true;
+
+    _bus?.fire(LoginSuccess(loginId));
   }
 
   Future<void> logout(String loginId) async {
@@ -244,24 +224,10 @@ class AccountProcessor {
       }
     );
 
-    var rsp = await HttpEngine.engine.execute(request);
+    await execute(request);
 
-    if(rsp.isSuccessful) {
-      var rspCode = rsp.response["rspCode"];
-      if(rspCode == null || !(rspCode is int)) {
-        throw ErrorInfo(HttpResponse.NO_RSP_CODE, "", "");
-      }
-
-      if(rspCode == RspCode.Base.OK) {
-        remove(loginId);
-        _bus?.fire(LogoutSuccess(loginId));
-        return;
-      }
-
-      throw ErrorInfo.fromJson(rsp.response);
-    } else {
-      throw ErrorInfo(rsp.code, "", "");
-    }
+    remove(loginId);
+    _bus?.fire(LogoutSuccess(loginId));
   }
 
   Future<void> refreshToken(String loginId, { bool tokenExpired }) {
@@ -296,33 +262,19 @@ class AccountProcessor {
     );
 
     var loginUtc = DateTime.now().millisecondsSinceEpoch;
-    var rsp = await HttpEngine.engine.execute(request);
+    var rsp = await execute(request);
 
-    if(rsp.isSuccessful) {
-      var rspCode = rsp.response["rspCode"];
-      if(rspCode == null || !(rspCode is int)) {
-        throw ErrorInfo(HttpResponse.NO_RSP_CODE, "no rsp code", "");
-      }
-
-      if(rspCode == RspCode.Base.OK) {
-        var tokenInfo = TokenInfo.fromJson(rsp.response);
-        var accessToken = tokenInfo.tokens?.accessToken;
-        if(accessToken == null || accessToken.isEmpty) {
-          throw ErrorInfo(RspCode.NetworkLocal.RSP_INVALID_TOKEN, "token invalid in rsp", "");
-        }
-
-        tokenInfo.userId = account.userId;
-        tokenInfo.tokens.loginUtc = loginUtc;
-        account.tokenInfo = tokenInfo;
-
-        _bus?.fire(TokenRefreshed(loginId));
-        return;
-      }
-
-      throw ErrorInfo.fromJson(rsp.response);
-    } else {
-      throw ErrorInfo(rsp.code, "", "");
+    var tokenInfo = TokenInfo.fromJson(rsp.response);
+    var accessToken = tokenInfo.tokens?.accessToken;
+    if(accessToken == null || accessToken.isEmpty) {
+      throw ErrorInfo(RspCode.NetworkLocal.RSP_INVALID_TOKEN, "token invalid in rsp", "");
     }
+
+    tokenInfo.userId = account.userId;
+    tokenInfo.tokens.loginUtc = loginUtc;
+    account.tokenInfo = tokenInfo;
+
+    _bus?.fire(TokenRefreshed(loginId));
   }
 
   Future<UserInfo> pullUserInfo(Account account, String userId) async {
@@ -338,29 +290,18 @@ class AccountProcessor {
       }
     );
 
-    var rsp = await HttpEngine.engine.execute(request);
+    var rsp = await execute(request);
 
-    if(rsp.isSuccessful) {
-      var rspCode = rsp.response["rspCode"];
-      if(rspCode == null || !(rspCode is int)) {
-        throw ErrorInfo(HttpResponse.NO_RSP_CODE, "", "");
-      }
+    var userInfo = UserInfo.fromJson(rsp.response);
 
-      if(rspCode == RspCode.Base.OK) {
-        var userInfo = UserInfo.fromJson(rsp.response);
-
-        Account account = getByUserId(userId);
-        if (account != null)
-          account.userInfo = userInfo;
-
-        _bus?.fire(UserInfoUpdated(userId));
-        return userInfo;
-      }
-
-      throw ErrorInfo.fromJson(rsp.response);
-    } else {
-      throw ErrorInfo(rsp.code, "", "");
+    {
+      Account account = getByUserId(userId);
+      if (account != null)
+        account.userInfo = userInfo;
     }
+
+    _bus?.fire(UserInfoUpdated(userId));
+    return userInfo;
   }
 
   Future<void> updateUserInfo(String userId, UpdateUserInfo userInfo) async {
@@ -371,23 +312,9 @@ class AccountProcessor {
       data: userInfo.toJson()
     );
 
-    var rsp = await HttpEngine.engine.execute(request);
+    await execute(request);
 
-    if(rsp.isSuccessful) {
-      var rspCode = rsp.response["rspCode"];
-      if(rspCode == null || !(rspCode is int)) {
-        throw ErrorInfo(HttpResponse.NO_RSP_CODE, "", "");
-      }
-
-      if(rspCode == RspCode.Base.OK) {
-        _bus?.fire(UserInfoUpdated(userId));
-        return;
-      }
-
-      throw ErrorInfo.fromJson(rsp.response);
-    } else {
-      throw ErrorInfo(rsp.code, "", "");
-    }
+    _bus?.fire(UserInfoUpdated(userId));
   }
 
   Future<void> updateAvatar(AvatarUpdateInfo updateInfo) async {
@@ -397,29 +324,15 @@ class AccountProcessor {
         data: updateInfo.toJson()
     );
 
-    var rsp = await HttpEngine.engine.execute(request);
+    var rsp = await execute(request);
 
-    if(rsp.isSuccessful) {
-      var rspCode = rsp.response["rspCode"];
-      if(rspCode == null || !(rspCode is int)) {
-        throw ErrorInfo(HttpResponse.NO_RSP_CODE, "", "");
-      }
-
-      if(rspCode == RspCode.Base.OK) {
-        var avatarUri = rsp.response["avatarUri"];
-        if(avatarUri != null && avatarUri is String) {
-          _accounts.entries.firstWhere(
-            (element) => updateInfo.userId == element.value.userId
-          )?.value?.userInfo?.baseInfo?.avatarUri = avatarUri;
-        }
-        _bus?.fire(UserAvatarUpdated(updateInfo.userId));
-        return;
-      }
-
-      throw ErrorInfo.fromJson(rsp.response);
-    } else {
-      throw ErrorInfo(rsp.code, "", "");
+    var avatarUri = rsp.response["avatarUri"];
+    if(avatarUri != null && avatarUri is String) {
+      _accounts.entries.firstWhere(
+        (element) => updateInfo.userId == element.value.userId
+      )?.value?.userInfo?.baseInfo?.avatarUri = avatarUri;
     }
+    _bus?.fire(UserAvatarUpdated(updateInfo.userId));
   }
 
   Future<void> retrievePassword(String loginId, RetrieveInfo retrieveInfo) async {
@@ -432,22 +345,7 @@ class AccountProcessor {
       data: retrieveInfo.toJson()
     );
 
-    var rsp = await HttpEngine.engine.execute(request);
-
-    if(rsp.isSuccessful) {
-      var rspCode = rsp.response["rspCode"];
-      if(rspCode == null || !(rspCode is int)) {
-        throw ErrorInfo(HttpResponse.NO_RSP_CODE, "", "");
-      }
-
-      if(rspCode == RspCode.Base.OK) {
-        return;
-      }
-
-      throw ErrorInfo.fromJson(rsp.response);
-    } else {
-      throw ErrorInfo(rsp.code, "", "");
-    }
+    await execute(request);
   }
 
   Future<void> changPassword(String userId, String accessToken,String oldPassword, String newPassword) async {
@@ -461,22 +359,7 @@ class AccountProcessor {
         }
     );
 
-    var rsp = await HttpEngine.engine.execute(request);
-
-    if(rsp.isSuccessful) {
-      var rspCode = rsp.response["rspCode"];
-      if(rspCode == null || !(rspCode is int)) {
-        throw ErrorInfo(HttpResponse.NO_RSP_CODE, "", "");
-      }
-
-      if(rspCode == RspCode.Base.OK) {
-        return;
-      }
-
-      throw ErrorInfo.fromJson(rsp.response);
-    } else {
-      throw ErrorInfo(rsp.code, "", "");
-    }
+    await execute(request);
   }
 
 }
