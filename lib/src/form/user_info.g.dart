@@ -39,12 +39,14 @@ Map<String, dynamic> _$UserInfoToJson(UserInfo instance) {
 
 BaseInfo _$BaseInfoFromJson(Map<String, dynamic> json) {
   $checkKeys(json, disallowNullValues: const [
+    'name',
     'nickName',
     'gender',
     'avatarUri',
     'birthday'
   ]);
   return BaseInfo()
+    ..name = json['name'] as String
     ..nickName = json['nickName'] as String
     ..gender = json['gender'] as String
     ..avatarUri = json['avatarUri'] as String
@@ -60,6 +62,7 @@ Map<String, dynamic> _$BaseInfoToJson(BaseInfo instance) {
     }
   }
 
+  writeNotNull('name', instance.name);
   writeNotNull('nickName', instance.nickName);
   writeNotNull('gender', instance.gender);
   writeNotNull('avatarUri', instance.avatarUri);
