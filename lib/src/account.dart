@@ -33,6 +33,7 @@ class Account {
   static String get clientId => "12345678-0000-0000-0000-000000000000";
 
   String get nickName => userInfo.baseInfo.nickName;
+  String get name => userInfo.baseInfo.name;
 
   bool get isLocalUser => loginId == LOCAL_LOGIN_ID;
 

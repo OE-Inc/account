@@ -39,7 +39,7 @@ Map<String, dynamic> _$UserInfoToJson(UserInfo instance) {
 
 BaseInfo _$BaseInfoFromJson(Map<String, dynamic> json) {
   $checkKeys(json, disallowNullValues: const [
-    'name',
+    // 'name',
     'nickName',
     'gender',
     'avatarUri',

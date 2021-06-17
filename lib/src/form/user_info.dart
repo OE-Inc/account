@@ -24,7 +24,7 @@ class UserInfo implements Jsonable {
 @JsonSerializable()
 class BaseInfo implements Jsonable {
   @JsonKey(disallowNullValue: true) String nickName;
-  @JsonKey(disallowNullValue: true) String name;
+  @JsonKey(disallowNullValue: false) String name;
   @JsonKey(disallowNullValue: true) String gender = GENDER_UNKOWN;
   @JsonKey(disallowNullValue: true) String avatarUri;
   @JsonKey(disallowNullValue: true) int birthday = 0;
