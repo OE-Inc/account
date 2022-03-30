@@ -203,7 +203,7 @@ class AccountProcessor {
     _bus?.fire(LoginSuccess(loginId));
   }
 
-  Future<void> logout(String loginId) async {
+  Future<void> logout(String loginId, { bool delete = false, String envId, String verificationCode }) async {
     var account = _accounts[loginId];
     if(account == null) {
       throw ErrorInfo(RspCode.NetworkLocal.NOT_LOGIN, "", "");
@@ -217,10 +217,18 @@ class AccountProcessor {
 
     var request = HttpRequest(
       Method.DELETE,
-      UrlFactory.getLogoutUrl(account.userId, Account.terminalId),
+      delete
+        ? UrlFactory.makeSimpleUrl('/v2/user/users/${account.userId}')
+        : UrlFactory.getLogoutUrl(account.userId, Account.terminalId)
+      ,
       data: {
         "accessToken": account.tokenInfo.tokens.accessToken,
-        "refreshToken": account.tokenInfo.tokens.refreshToken
+        "refreshToken": account.tokenInfo.tokens.refreshToken,
+
+        if (delete)"env": {
+          "envId": envId,
+          "result": verificationCode,
+        },
       }
     );
 
@@ -229,6 +237,12 @@ class AccountProcessor {
     remove(loginId);
     _bus?.fire(LogoutSuccess(loginId));
   }
+
+
+  Future<void> deleteAccount(String loginId, String envId, String verificationCode) {
+    return logout(loginId, delete: true, envId: envId, verificationCode: verificationCode);
+  }
+
 
   Future<void> refreshToken(String loginId, { bool tokenExpired }) {
     return _refreshToken(loginId, tokenExpired: tokenExpired).catchError((error) {

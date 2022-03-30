@@ -1,7 +1,6 @@
 name: account
 description: Account project.
-version: 1.1.6
-author: OeCore
+version: 1.1.7
 homepage: https://www.oecore.com
 
 environment:

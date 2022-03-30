@@ -31,6 +31,10 @@ class UrlFactory {
 
   static String getUserAvatarUrl(String userId) => _makeUrl(_USER_AVATAR, [userId]);
 
+  static String makeSimpleUrl(String relative) {
+    return baseUrl + relative;
+  }
+
   static String _makeUrl(String relative, var args) {
     return baseUrl + sprintf(relative, args);
   }
