@@ -203,7 +203,7 @@ class AccountProcessor {
     _bus?.fire(LoginSuccess(loginId));
   }
 
-  Future<void> logout(String loginId, { bool delete = false, String envId, String verificationCode }) async {
+  Future<void> logout(String loginId, { bool delete = false, String password, String envId, String verificationCode }) async {
     var account = _accounts[loginId];
     if(account == null) {
       throw ErrorInfo(RspCode.NetworkLocal.NOT_LOGIN, "", "");
@@ -226,10 +226,11 @@ class AccountProcessor {
         "refreshToken": account.tokenInfo.tokens.refreshToken,
         "loginId": loginId,
 
-        if (delete)"env": {
+        if (delete && envId != null) "env": {
           "envId": envId,
           "result": verificationCode,
-        },
+        } else if (delete && password != null)
+          "password": password,
       }
     );
 
@@ -240,8 +241,12 @@ class AccountProcessor {
   }
 
 
-  Future<void> deleteAccount(String loginId, String envId, String verificationCode) {
-    return logout(loginId, delete: true, envId: envId, verificationCode: verificationCode);
+  Future<void> deleteAccount(String loginId, {
+    String envId,
+    String verificationCode,
+    String password,
+  }) {
+    return logout(loginId, delete: true, password: password, envId: envId, verificationCode: verificationCode);
   }
 
 
