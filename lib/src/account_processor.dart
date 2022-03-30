@@ -224,6 +224,7 @@ class AccountProcessor {
       data: {
         "accessToken": account.tokenInfo.tokens.accessToken,
         "refreshToken": account.tokenInfo.tokens.refreshToken,
+        "loginId": loginId,
 
         if (delete)"env": {
           "envId": envId,
