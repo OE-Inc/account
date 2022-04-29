@@ -157,6 +157,28 @@ class AccountProcessor {
     _bus?.fire(LoginSuccess(LOCAL_LOGIN_ID));
   }
 
+  Future<void> loginByExternalToken(String loginId, String userId, String accessToken) async {
+    var user = _accounts[loginId];
+    if(user == null) {
+      user = Account(loginId: loginId);
+    }
+
+    user.userInfo.loginInfo.status = STAT_NORMAL;
+
+    user.tokenInfo.userId = userId;
+
+    user.isLogin = true;
+    user.tokenInfo.tokens.accessToken = accessToken;
+    user.tokenInfo.tokens.refreshToken = INVALID_TOKEN;
+    user.tokenInfo.tokens.loginUtc = DateTime.now().millisecondsSinceEpoch;
+    user.tokenInfo.tokens.expiresIn = 0xFFFFFFFFFFFF;
+
+    _accounts[loginId] = user;
+    _bus?.fire(LoginSuccess(loginId));
+
+    await pullUserInfo(user, userId);
+  }
+
   Future<void> login(String loginId, LoginInfo loginInfo) async {
     if(LOCAL_USER_ID.toLowerCase() == loginId.toLowerCase()) {
       return loginLocalUser(loginId);
