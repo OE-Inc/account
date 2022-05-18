@@ -107,7 +107,7 @@ class AccountProcessor {
     var rspCode = rsp.response["rspCode"];
     var env = rsp.response["env"];
     if(env == null || !(env is Map<String, dynamic>)) {
-      throw ErrorInfo(RspCode.NetworkLocal.RSP_ERROR, "$env", "");
+      throw ErrorInfo(RspCode.NetworkLocal.FORMAT_ERROR, "$env", "");
     }
 
     var expiresIn = env["expiresIn"];
