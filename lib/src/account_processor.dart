@@ -154,6 +154,8 @@ class AccountProcessor {
 
     _accounts[LOCAL_LOGIN_ID] = local;
 
+    lastLoginId = LOCAL_LOGIN_ID;
+
     _bus?.fire(LoginSuccess(LOCAL_LOGIN_ID));
   }
 
@@ -175,6 +177,8 @@ class AccountProcessor {
 
     _accounts[loginId] = user;
     _bus?.fire(LoginSuccess(loginId));
+
+    lastLoginId = loginId;
 
     await pullUserInfo(user, userId);
   }
