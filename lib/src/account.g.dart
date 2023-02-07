@@ -7,17 +7,16 @@ part of 'account.dart';
 // **************************************************************************
 
 Account _$AccountFromJson(Map<String, dynamic> json) {
-  $checkKeys(json, disallowNullValues: const ['loginId', 'isLogin']);
+  $checkKeys(
+    json,
+    disallowNullValues: const ['loginId', 'isLogin'],
+  );
   return Account(
-    loginId: json['loginId'] as String,
+    loginId: json['loginId'] as String?,
   )
     ..isLogin = json['isLogin'] as bool
-    ..userInfo = json['userInfo'] == null
-        ? null
-        : UserInfo.fromJson(json['userInfo'] as Map<String, dynamic>)
-    ..tokenInfo = json['tokenInfo'] == null
-        ? null
-        : TokenInfo.fromJson(json['tokenInfo'] as Map<String, dynamic>);
+    ..userInfo = UserInfo.fromJson(json['userInfo'] as Map<String, dynamic>)
+    ..tokenInfo = TokenInfo.fromJson(json['tokenInfo'] as Map<String, dynamic>);
 }
 
 Map<String, dynamic> _$AccountToJson(Account instance) {
@@ -30,7 +29,7 @@ Map<String, dynamic> _$AccountToJson(Account instance) {
   }
 
   writeNotNull('loginId', instance.loginId);
-  writeNotNull('isLogin', instance.isLogin);
+  val['isLogin'] = instance.isLogin;
   val['userInfo'] = instance.userInfo;
   val['tokenInfo'] = instance.tokenInfo;
   return val;

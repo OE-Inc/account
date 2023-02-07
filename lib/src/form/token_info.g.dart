@@ -6,13 +6,9 @@ part of 'token_info.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-TokenInfo _$TokenInfoFromJson(Map<String, dynamic> json) {
-  return TokenInfo()
-    ..userId = json['userId'] as String
-    ..tokens = json['tokens'] == null
-        ? null
-        : Tokens.fromJson(json['tokens'] as Map<String, dynamic>);
-}
+TokenInfo _$TokenInfoFromJson(Map<String, dynamic> json) => TokenInfo()
+  ..userId = json['userId'] as String
+  ..tokens = Tokens.fromJson(json['tokens'] as Map<String, dynamic>);
 
 Map<String, dynamic> _$TokenInfoToJson(TokenInfo instance) => <String, dynamic>{
       'userId': instance.userId,
@@ -20,20 +16,24 @@ Map<String, dynamic> _$TokenInfoToJson(TokenInfo instance) => <String, dynamic>{
     };
 
 Tokens _$TokensFromJson(Map<String, dynamic> json) {
-  $checkKeys(json, disallowNullValues: const [
-    'accessToken',
-    'refreshToken',
-    'permissions',
-    'expiresIn',
-    'loginUtc'
-  ]);
+  $checkKeys(
+    json,
+    disallowNullValues: const [
+      'accessToken',
+      'refreshToken',
+      'permissions',
+      'expiresIn',
+      'loginUtc'
+    ],
+  );
   return Tokens()
-    ..accessToken = json['accessToken'] as String
-    ..refreshToken = json['refreshToken'] as String
-    ..permissions =
-        (json['permissions'] as List)?.map((e) => e as String)?.toList()
-    ..expiresIn = json['expiresIn'] as int
-    ..loginUtc = json['loginUtc'] as int;
+    ..accessToken = json['accessToken'] as String?
+    ..refreshToken = json['refreshToken'] as String?
+    ..permissions = (json['permissions'] as List<dynamic>?)
+        ?.map((e) => e as String)
+        .toList()
+    ..expiresIn = json['expiresIn'] as int?
+    ..loginUtc = json['loginUtc'] as int?;
 }
 
 Map<String, dynamic> _$TokensToJson(Tokens instance) {

@@ -14,26 +14,26 @@ class Account {
   static String terminalId = Uuid().v4();
 
   @JsonKey(disallowNullValue: true)
-  String loginId;
+  String? loginId;
   @JsonKey(disallowNullValue: true)
   bool isLogin = false;
   UserInfo userInfo = UserInfo();
   TokenInfo tokenInfo = TokenInfo();
 
-  Account({this.loginId});
+  Account({ this.loginId, });
 
-  bool get isValid => utc() - tokenInfo.tokens.loginUtc <= tokenInfo.tokens.expiresIn;
+  bool get isValid => utc() - (tokenInfo.tokens.loginUtc ?? 0) <= (tokenInfo.tokens.expiresIn ?? 0);
 
   bool get isReady => isLogin != false && STAT_NORMAL == userInfo.loginInfo.status;
 
   String get userId => tokenInfo.userId;
 
-  String get accessToken => tokenInfo.tokens.accessToken;
+  String? get accessToken => tokenInfo.tokens.accessToken;
 
   static String get clientId => "12345678-0000-0000-0000-000000000000";
 
-  String get nickName => userInfo.baseInfo.nickName;
-  String get name => userInfo.baseInfo.name;
+  String? get nickName => userInfo.baseInfo.nickName;
+  String? get name => userInfo.baseInfo.name;
 
   bool get isLocalUser => loginId == LOCAL_LOGIN_ID;
 

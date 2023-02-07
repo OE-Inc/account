@@ -6,14 +6,13 @@ part of 'avatar_update_info.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-AvatarUpdateInfo _$AvatarUpdateInfoFromJson(Map<String, dynamic> json) {
-  return AvatarUpdateInfo()
-    ..userId = json['userId'] as String
-    ..data = json['data'] as String
-    ..accessToken = json['accessToken'] as String
-    ..mime = json['mime'] as String
-    ..encoding = json['encoding'] as String;
-}
+AvatarUpdateInfo _$AvatarUpdateInfoFromJson(Map<String, dynamic> json) =>
+    AvatarUpdateInfo()
+      ..userId = json['userId'] as String
+      ..data = json['data'] as String
+      ..accessToken = json['accessToken'] as String
+      ..mime = json['mime'] as String
+      ..encoding = json['encoding'] as String;
 
 Map<String, dynamic> _$AvatarUpdateInfoToJson(AvatarUpdateInfo instance) =>
     <String, dynamic>{

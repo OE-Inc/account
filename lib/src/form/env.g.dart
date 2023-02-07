@@ -7,10 +7,13 @@ part of 'env.dart';
 // **************************************************************************
 
 Env _$EnvFromJson(Map<String, dynamic> json) {
-  $checkKeys(json, disallowNullValues: const ['envId', 'result']);
+  $checkKeys(
+    json,
+    disallowNullValues: const ['envId', 'result'],
+  );
   return Env()
-    ..envId = json['envId'] as String
-    ..result = json['result'] as String;
+    ..envId = json['envId'] as String?
+    ..result = json['result'] as String?;
 }
 
 Map<String, dynamic> _$EnvToJson(Env instance) {

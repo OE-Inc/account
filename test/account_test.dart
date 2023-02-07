@@ -47,7 +47,7 @@ void main() {
 
   test("env", () async {
     UrlFactory.baseUrl = "http://192.168.1.227";
-    await AccountProcessor.processor.ownerValidate("+86-17328768391", packageId: "com.oe.platform.android.main");
+    await AccountProcessor.processor.ownerValidate("authTo", packageId: "com.oe.platform.android.main");
     print("done");
   });
 
@@ -58,17 +58,16 @@ void main() {
     info.packageId = "com.oe.platform.android.main";
     info.env.envId = "604406c1-00ce-4f59-9240-b2c03a54b9df";
     info.env.result = "598072"; //owner请求的验证码
-    var rsp = await AccountProcessor.processor.register("+86-17328768391", info).catchError((error) => print(error));
+    var rsp = await AccountProcessor.processor.register("+86-17328768391", info);
     print("done");
   });
 
   test("refresh token", () async {
-    await AccountProcessor.processor.refreshToken("loginId", tokenExpired: true).catchError((e) => print(e));
+    await AccountProcessor.processor.refreshToken("loginId", tokenExpired: true);
   });
 
-  test("change passwork", () async {
-    await AccountProcessor.processor.changPassword("a892d8fb-8ab6-4f16-925c-6721fb4042a5", "b61ead43-1071-441b-bce0-7e48e9e539c2", "345678", "234567")
-    .catchError((e) => print(e));
+  test("change password", () async {
+    await AccountProcessor.processor.changPassword("a892d8fb-8ab6-4f16-925c-6721fb4042a5", "b61ead43-1071-441b-bce0-7e48e9e539c2", "345678", "234567");
   });
 
   test("account serlize", () {

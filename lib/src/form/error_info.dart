@@ -6,7 +6,7 @@ part 'error_info.g.dart';
 
 @JsonSerializable()
 class ErrorInfo extends Error implements Jsonable {
-  int rspCode = 99999999;
+  int? rspCode = 99999999;
   @JsonKey(disallowNullValue: true)
   String reason = "";
   @JsonKey(disallowNullValue: true)

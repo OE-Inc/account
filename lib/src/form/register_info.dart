@@ -11,7 +11,7 @@ class RegisterInfo implements Jsonable {
   Env env = new Env();
   UserInfo newUserInfo = new UserInfo();
   @JsonKey(disallowNullValue: true)
-  String packageId;
+  String? packageId;
 
   RegisterInfo();
 

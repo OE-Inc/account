@@ -7,13 +7,14 @@ part of 'retrieve_info.dart';
 // **************************************************************************
 
 RetrieveInfo _$RetrieveInfoFromJson(Map<String, dynamic> json) {
-  $checkKeys(json, disallowNullValues: const ['password', 'packageId']);
+  $checkKeys(
+    json,
+    disallowNullValues: const ['password', 'packageId'],
+  );
   return RetrieveInfo()
-    ..env = json['env'] == null
-        ? null
-        : Env.fromJson(json['env'] as Map<String, dynamic>)
-    ..password = json['password'] as String
-    ..packageId = json['packageId'] as String;
+    ..env = Env.fromJson(json['env'] as Map<String, dynamic>)
+    ..password = json['password'] as String?
+    ..packageId = json['packageId'] as String?;
 }
 
 Map<String, dynamic> _$RetrieveInfoToJson(RetrieveInfo instance) {

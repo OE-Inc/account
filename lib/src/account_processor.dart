@@ -24,12 +24,12 @@ class AccountProcessor {
 
   static AccountProcessor get processor => _processor;
 
-  EventBus _bus;
+  EventBus? _bus;
   var _accounts = Map<String, Account>();
 
   set eventBus(EventBus bus) => _bus = bus;
 
-  String lastLoginId;
+  String? lastLoginId;
 
   Map<String, Account> get accounts => Map.from(_accounts);
 
@@ -47,16 +47,16 @@ class AccountProcessor {
     });
   }
 
-  Account remove(String loginId) => _accounts.remove(loginId);
+  Account? remove(String loginId) => _accounts.remove(loginId);
 
-  Account getByLoginId(String loginId) => _get(loginId);
+  Account? getByLoginId(String loginId) => _get(loginId);
 
-  Account getByUserId(String userId) {
-    return _accounts.values.firstWhere((a) => a.userId == userId, orElse: () => null);
+  Account? getByUserId(String userId) {
+    return _accounts.values.firstWhereNullable((a) => a.userId == userId);
   }
 
   Account _get(String loginId) {
-    Account account = _accounts[loginId];
+    var account = _accounts[loginId];
     if(account == null) {
       account = Account(loginId: loginId);
     }
@@ -78,7 +78,7 @@ class AccountProcessor {
     }
 
     if (rspCode != RspCode.Base.OK) {
-      throw ErrorInfo.fromJson(rsp.response);
+      throw ErrorInfo.fromJson(rsp.response!);
     }
 
     return rsp;
@@ -88,7 +88,7 @@ class AccountProcessor {
   ///   Map<String, dynamic>: 请求成功，包含"rspCode"、"expiresIn"和"envId"
   ///
   /// 失败则会抛出异常
-  Future<Map<String, dynamic>> ownerValidate(String authTo, {String packageId}) async {
+  Future<Map<String, dynamic>> ownerValidate(String authTo, {String? packageId}) async {
 
     var params = {
       "authTo": authTo,
@@ -104,8 +104,8 @@ class AccountProcessor {
     );
     var rsp = await execute(request);
 
-    var rspCode = rsp.response["rspCode"];
-    var env = rsp.response["env"];
+    var rspCode = rsp.response!["rspCode"];
+    var env = rsp.response!["env"];
     if(env == null || !(env is Map<String, dynamic>)) {
       throw ErrorInfo(RspCode.NetworkLocal.FORMAT_ERROR, "$env", "");
     }
@@ -120,7 +120,7 @@ class AccountProcessor {
       };
     }
 
-    throw ErrorInfo.fromJson(rsp.response);
+    throw ErrorInfo.fromJson(rsp.response!);
   }
 
   /// 注册流程, 失败抛出异常
@@ -205,17 +205,17 @@ class AccountProcessor {
     var rsp = await execute(request);
 
     Account account = _get(loginId);
-    account.tokenInfo = TokenInfo.fromJson(rsp.response);
-    account.userInfo = UserInfo.fromJson(rsp.response);
+    account.tokenInfo = TokenInfo.fromJson(rsp.response!);
+    account.userInfo = UserInfo.fromJson(rsp.response!);
 
-    var token = account.tokenInfo?.tokens?.accessToken;
-    var userId = account.tokenInfo?.userId;
+    var token = account.tokenInfo.tokens.accessToken;
+    var userId = account.tokenInfo.userId;
 
     if(token == null || token.isEmpty) {
-      return RspCode.NetworkLocal.RSP_INVALID_TOKEN;
+      throw ErrorInfo(RspCode.NetworkLocal.RSP_INVALID_TOKEN, "", "");
     }
 
-    if(userId == null || userId.isEmpty) {
+    if(userId.isEmpty) {
       throw ErrorInfo(RspCode.NetworkLocal.RSP_INVALID_USERID, "", "");
     }
 
@@ -229,7 +229,7 @@ class AccountProcessor {
     _bus?.fire(LoginSuccess(loginId));
   }
 
-  Future<void> logout(String loginId, { bool delete = false, String password, String envId, String verificationCode }) async {
+  Future<void> logout(String loginId, { bool delete = false, String? password, String? envId, String? verificationCode }) async {
     var account = _accounts[loginId];
     if(account == null) {
       throw ErrorInfo(RspCode.NetworkLocal.NOT_LOGIN, "", "");
@@ -268,15 +268,15 @@ class AccountProcessor {
 
 
   Future<void> deleteAccount(String loginId, {
-    String envId,
-    String verificationCode,
-    String password,
+    String? envId,
+    String? verificationCode,
+    String? password,
   }) {
     return logout(loginId, delete: true, password: password, envId: envId, verificationCode: verificationCode);
   }
 
 
-  Future<void> refreshToken(String loginId, { bool tokenExpired }) {
+  Future<void> refreshToken(String loginId, { bool? tokenExpired }) {
     return _refreshToken(loginId, tokenExpired: tokenExpired).catchError((error) {
       if(tokenExpired == true || (error is ErrorInfo && error.rspCode == RspCode.Base.NOT_FOUND)) {
         _bus?.fire(TokenExpired(loginId));
@@ -285,7 +285,7 @@ class AccountProcessor {
     });
   }
 
-  Future<void> _refreshToken(String loginId, { bool tokenExpired }) async {
+  Future<void> _refreshToken(String loginId, { bool? tokenExpired }) async {
     var account = _accounts[loginId];
     if(account == null) {
       throw ErrorInfo(RspCode.NetworkLocal.NOT_LOGIN, "account not in processor", "");
@@ -296,7 +296,7 @@ class AccountProcessor {
     }
 
     if(tokenExpired == null) {
-      tokenExpired = account.tokenInfo.tokens.loginUtc + account.tokenInfo.tokens.expiresIn <= DateTime.now().millisecondsSinceEpoch;
+      tokenExpired = (account.tokenInfo.tokens.loginUtc ?? 0) + (account.tokenInfo.tokens.expiresIn ?? 0) <= DateTime.now().millisecondsSinceEpoch;
     }
 
     var request = HttpRequest(
@@ -310,8 +310,8 @@ class AccountProcessor {
     var loginUtc = DateTime.now().millisecondsSinceEpoch;
     var rsp = await execute(request);
 
-    var tokenInfo = TokenInfo.fromJson(rsp.response);
-    var accessToken = tokenInfo.tokens?.accessToken;
+    var tokenInfo = TokenInfo.fromJson(rsp.response!);
+    var accessToken = tokenInfo.tokens.accessToken;
     if(accessToken == null || accessToken.isEmpty) {
       throw ErrorInfo(RspCode.NetworkLocal.RSP_INVALID_TOKEN, "token invalid in rsp", "");
     }
@@ -323,7 +323,7 @@ class AccountProcessor {
     _bus?.fire(TokenRefreshed(loginId));
   }
 
-  Future<UserInfo> pullUserInfo(Account account, String userId) async {
+  Future<UserInfo> pullUserInfo(Account? account, String userId) async {
     if(account == null || account.isLocalUser) {
       throw ErrorInfo(RspCode.NetworkLocal.NOT_LOGIN, "", "");
     }
@@ -338,10 +338,10 @@ class AccountProcessor {
 
     var rsp = await execute(request);
 
-    var userInfo = UserInfo.fromJson(rsp.response);
+    var userInfo = UserInfo.fromJson(rsp.response!);
 
     {
-      Account account = getByUserId(userId);
+      var account = getByUserId(userId);
       if (account != null)
         account.userInfo = userInfo;
     }
@@ -372,11 +372,11 @@ class AccountProcessor {
 
     var rsp = await execute(request);
 
-    var avatarUri = rsp.response["avatarUri"];
+    var avatarUri = rsp.response!["avatarUri"];
     if(avatarUri != null && avatarUri is String) {
-      _accounts.entries.firstWhere(
+      _accounts.entries.firstWhereNullable(
         (element) => updateInfo.userId == element.value.userId
-      )?.value?.userInfo?.baseInfo?.avatarUri = avatarUri;
+      )?.value.userInfo.baseInfo.avatarUri = avatarUri;
     }
     _bus?.fire(UserAvatarUpdated(updateInfo.userId));
   }

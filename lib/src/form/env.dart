@@ -6,9 +6,9 @@ part 'env.g.dart';
 @JsonSerializable()
 class Env implements Jsonable {
   @JsonKey(disallowNullValue: true)
-  String envId;
+  String? envId;
   @JsonKey(disallowNullValue: true)
-  String result;
+  String? result;
 
   Env();
 

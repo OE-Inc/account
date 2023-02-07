@@ -8,7 +8,7 @@ part 'token_info.g.dart';
 class TokenInfo implements Jsonable {
 
   String userId = "00000000-0000-0000-0000-000000000000";
-  Tokens tokens = new Tokens();
+  Tokens tokens = Tokens();
 
   TokenInfo();
 
@@ -20,11 +20,11 @@ class TokenInfo implements Jsonable {
 
 @JsonSerializable()
 class Tokens implements Jsonable {
-  @JsonKey(disallowNullValue: true) String accessToken;
-  @JsonKey(disallowNullValue: true) String refreshToken;
-  @JsonKey(disallowNullValue: true) List<String> permissions;
-  @JsonKey(disallowNullValue: true) int expiresIn;
-  @JsonKey(disallowNullValue: true) int loginUtc = DateTime.now().millisecondsSinceEpoch;
+  @JsonKey(disallowNullValue: true) String? accessToken;
+  @JsonKey(disallowNullValue: true) String? refreshToken;
+  @JsonKey(disallowNullValue: true) List<String>? permissions;
+  @JsonKey(disallowNullValue: true) int? expiresIn = 0;
+  @JsonKey(disallowNullValue: true) int? loginUtc = 0;
 
   Tokens();
 

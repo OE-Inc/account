@@ -6,10 +6,10 @@ part 'avatar_update_info.g.dart';
 @JsonSerializable()
 class AvatarUpdateInfo implements Jsonable {
 
-  String userId = null;
-  String data = null;
-  String accessToken = null;
-  String mime = null;
+  late String userId;
+  late String data;
+  late String accessToken;
+  late String mime;
   String encoding = "base64";
 
   AvatarUpdateInfo();

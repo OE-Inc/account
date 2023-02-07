@@ -7,15 +7,15 @@ part of 'register_info.dart';
 // **************************************************************************
 
 RegisterInfo _$RegisterInfoFromJson(Map<String, dynamic> json) {
-  $checkKeys(json, disallowNullValues: const ['packageId']);
+  $checkKeys(
+    json,
+    disallowNullValues: const ['packageId'],
+  );
   return RegisterInfo()
-    ..env = json['env'] == null
-        ? null
-        : Env.fromJson(json['env'] as Map<String, dynamic>)
-    ..newUserInfo = json['newUserInfo'] == null
-        ? null
-        : UserInfo.fromJson(json['newUserInfo'] as Map<String, dynamic>)
-    ..packageId = json['packageId'] as String;
+    ..env = Env.fromJson(json['env'] as Map<String, dynamic>)
+    ..newUserInfo =
+        UserInfo.fromJson(json['newUserInfo'] as Map<String, dynamic>)
+    ..packageId = json['packageId'] as String?;
 }
 
 Map<String, dynamic> _$RegisterInfoToJson(RegisterInfo instance) {

@@ -8,8 +8,8 @@ part 'retrieve_info.g.dart';
 @JsonSerializable()
 class RetrieveInfo implements Jsonable {
   Env env = new Env();
-  @JsonKey(disallowNullValue: true) String password;
-  @JsonKey(disallowNullValue: true) String packageId;
+  @JsonKey(disallowNullValue: true) String? password;
+  @JsonKey(disallowNullValue: true) String? packageId;
 
   RetrieveInfo();
 

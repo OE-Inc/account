@@ -7,14 +7,17 @@ part of 'update_user_info.dart';
 // **************************************************************************
 
 UpdateUserInfo _$UpdateUserInfoFromJson(Map<String, dynamic> json) {
-  $checkKeys(json, disallowNullValues: const [
-    'accessToken',
-    'baseInfo',
-    'extendInfo',
-    'loginInfo'
-  ]);
+  $checkKeys(
+    json,
+    disallowNullValues: const [
+      'accessToken',
+      'baseInfo',
+      'extendInfo',
+      'loginInfo'
+    ],
+  );
   return UpdateUserInfo()
-    ..accessToken = json['accessToken'] as String
+    ..accessToken = json['accessToken'] as String?
     ..baseInfo = json['baseInfo'] == null
         ? null
         : BaseInfo.fromJson(json['baseInfo'] as Map<String, dynamic>)

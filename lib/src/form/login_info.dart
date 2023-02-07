@@ -5,17 +5,13 @@ part 'login_info.g.dart';
 
 @JsonSerializable()
 class LoginInfo implements Jsonable {
-  @JsonKey(disallowNullValue: true)
-  String clientId;
-  @JsonKey(disallowNullValue: true)
-  String packageId;
-  @JsonKey(disallowNullValue: true)
-  String password;
-  @JsonKey(disallowNullValue: true)
-  TermInfo termInfo = new TermInfo();
+  @JsonKey(disallowNullValue: true) String? clientId;
+  @JsonKey(disallowNullValue: true) String? packageId;
+  @JsonKey(disallowNullValue: true) String? password;
+  @JsonKey(disallowNullValue: true) TermInfo termInfo = new TermInfo();
   Prefer prefer = new Prefer();
-  PushInfo pushInfo = new PushInfo();
-  ClientInfo clientInfo = new ClientInfo();
+  @JsonKey(disallowNullValue: true) PushInfo? pushInfo;
+  @JsonKey(disallowNullValue: true) ClientInfo clientInfo = new ClientInfo();
 
   LoginInfo();
 
@@ -28,15 +24,15 @@ class LoginInfo implements Jsonable {
 @JsonSerializable()
 class TermInfo implements Jsonable {
 
-  @JsonKey(disallowNullValue: true) String name;
-  @JsonKey(disallowNullValue: true) String os;
-  @JsonKey(disallowNullValue: true) String ua;
-  @JsonKey(disallowNullValue: true) String v;
-  @JsonKey(disallowNullValue: true) String rom;
-  @JsonKey(disallowNullValue: true) String manu;
-  @JsonKey(disallowNullValue: true) String model;
-  @JsonKey(disallowNullValue: true) String ip;
-  @JsonKey(disallowNullValue: true) String id;
+  @JsonKey(disallowNullValue: true) String? name;
+  @JsonKey(disallowNullValue: true) String? os;
+  @JsonKey(disallowNullValue: true) String? ua;
+  @JsonKey(disallowNullValue: true) String? v;
+  @JsonKey(disallowNullValue: true) String? rom;
+  @JsonKey(disallowNullValue: true) String? manu;
+  @JsonKey(disallowNullValue: true) String? model;
+  @JsonKey(disallowNullValue: true) String? ip;
+  @JsonKey(disallowNullValue: true) String? id;
 
   TermInfo();
 
@@ -48,9 +44,9 @@ class TermInfo implements Jsonable {
 
 @JsonSerializable()
 class Prefer implements Jsonable {
-  @JsonKey(disallowNullValue: true) String lang;
-  @JsonKey(disallowNullValue: true) String region;
-  @JsonKey(disallowNullValue: true) String tz;
+  @JsonKey(disallowNullValue: true) String? lang;
+  @JsonKey(disallowNullValue: true) String? region;
+  @JsonKey(disallowNullValue: true) String? tz;
 
   Prefer();
 
@@ -62,8 +58,8 @@ class Prefer implements Jsonable {
 
 @JsonSerializable()
 class PushInfo implements Jsonable {
-  @JsonKey(disallowNullValue: true) String type;
-  @JsonKey(disallowNullValue: true) String token;
+  @JsonKey(disallowNullValue: true) String? type;
+  @JsonKey(disallowNullValue: true) String? token;
 
   PushInfo();
 
@@ -76,7 +72,7 @@ class PushInfo implements Jsonable {
 @JsonSerializable()
 class ClientInfo implements Jsonable {
   AccountInfo account = new AccountInfo();
-  App app = new App();
+  @JsonKey(disallowNullValue: true) App? app = new App();
 
   ClientInfo();
 
@@ -88,7 +84,7 @@ class ClientInfo implements Jsonable {
 
 @JsonSerializable()
 class AccountInfo implements Jsonable {
-  @JsonKey(disallowNullValue: true) String v;
+  @JsonKey(disallowNullValue: true)String? v;
 
   AccountInfo();
 
@@ -100,8 +96,8 @@ class AccountInfo implements Jsonable {
 
 @JsonSerializable()
 class App implements Jsonable {
-  @JsonKey(disallowNullValue: true) String v;
-  @JsonKey(disallowNullValue: true) String appId;
+  @JsonKey(disallowNullValue: true) String? v;
+  @JsonKey(disallowNullValue: true) String? appId;
 
   App();
 
