@@ -1,4 +1,9 @@
 
+/*
+ * Copyright (c) 2019-2023 OE Technology (Shenzhen) Co., Ltd. All Right Reserved.
+ * Copyright (c) 2019-2023 偶忆科技（深圳）有限公司. All Right Reserved.
+ */
+
 const int VERSION = 2;
 const String LOCAL_USER_ID = "00000000-7F00-0000-0000-000100000000";
 const String INVALID_TOKEN = "00000000-0000-0000-0000-000000000000";
