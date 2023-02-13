@@ -9,7 +9,7 @@ part of 'user_info.dart';
 UserInfo _$UserInfoFromJson(Map<String, dynamic> json) {
   $checkKeys(
     json,
-    disallowNullValues: const ['password', 'extendInfo'],
+    disallowNullValues: const ['password'],
   );
   return UserInfo()
     ..password = json['password'] as String?
@@ -31,7 +31,7 @@ Map<String, dynamic> _$UserInfoToJson(UserInfo instance) {
 
   writeNotNull('password', instance.password);
   val['baseInfo'] = instance.baseInfo;
-  writeNotNull('extendInfo', instance.extendInfo);
+  val['extendInfo'] = instance.extendInfo;
   val['loginInfo'] = instance.loginInfo;
   return val;
 }
@@ -39,13 +39,7 @@ Map<String, dynamic> _$UserInfoToJson(UserInfo instance) {
 BaseInfo _$BaseInfoFromJson(Map<String, dynamic> json) {
   $checkKeys(
     json,
-    disallowNullValues: const [
-      'nickName',
-      'name',
-      'gender',
-      'avatarUri',
-      'birthday'
-    ],
+    disallowNullValues: const ['nickName', 'gender', 'avatarUri', 'birthday'],
   );
   return BaseInfo()
     ..nickName = json['nickName'] as String?
@@ -65,7 +59,7 @@ Map<String, dynamic> _$BaseInfoToJson(BaseInfo instance) {
   }
 
   writeNotNull('nickName', instance.nickName);
-  writeNotNull('name', instance.name);
+  val['name'] = instance.name;
   val['gender'] = instance.gender;
   writeNotNull('avatarUri', instance.avatarUri);
   val['birthday'] = instance.birthday;

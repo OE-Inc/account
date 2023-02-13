@@ -9,7 +9,7 @@ part 'user_info.g.dart';
 class UserInfo implements Jsonable {
   @JsonKey(disallowNullValue: true) String? password;
   BaseInfo baseInfo = new BaseInfo();
-  @JsonKey(disallowNullValue: true) ExtendInfo? extendInfo = new ExtendInfo();
+  @JsonKey(disallowNullValue: false) ExtendInfo? extendInfo = new ExtendInfo();
   Login loginInfo = new Login();
 
   UserInfo();
@@ -23,7 +23,7 @@ class UserInfo implements Jsonable {
 @JsonSerializable()
 class BaseInfo implements Jsonable {
   @JsonKey(disallowNullValue: true) String? nickName;
-  @JsonKey(disallowNullValue: true) String? name;
+  @JsonKey(disallowNullValue: false) String? name;
   @JsonKey(disallowNullValue: true) String gender = GENDER_UNKOWN;
   @JsonKey(disallowNullValue: true) String? avatarUri;
   @JsonKey(disallowNullValue: true) int birthday = 0;

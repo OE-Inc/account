@@ -193,7 +193,7 @@ class AccountProcessor {
     if(loginInfo.clientId == null) {
       loginInfo.clientId = Account.clientId;
     }
-    loginInfo.clientInfo.account.v = VERSION.toString();
+    loginInfo.clientInfo?.account.v = VERSION.toString();
 
     var request = HttpRequest(
       Method.PUT,

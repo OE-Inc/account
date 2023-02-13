@@ -9,7 +9,7 @@ part 'register_info.g.dart';
 @JsonSerializable()
 class RegisterInfo implements Jsonable {
   Env env = new Env();
-  UserInfo newUserInfo = new UserInfo();
+  UserInfo? newUserInfo = new UserInfo();
   @JsonKey(disallowNullValue: true)
   String? packageId;
 
