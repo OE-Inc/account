@@ -13,7 +13,7 @@ dependencies:
   uuid: ^3.0.1
   sprintf: ^6.0.0
   utils:
-    git: git@projects.oecore.com:libs.dart/utils.git
+    git: https://github.com/OE-Inc/utils.git
   event_bus: ^2.0.0
 
 dev_dependencies:
