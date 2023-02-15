@@ -59,7 +59,7 @@ void main() {
   test("register", () async {
     UrlFactory.baseUrl = "http://192.168.1.227";
     var info = RegisterInfo();
-    info.newUserInfo.password = "123456";
+    info.newUserInfo!.password = "123456";
     info.packageId = "com.oe.platform.android.main";
     info.env.envId = "604406c1-00ce-4f59-9240-b2c03a54b9df";
     info.env.result = "598072"; //owner请求的验证码

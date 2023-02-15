@@ -31,7 +31,7 @@ Map<String, dynamic> _$UserInfoToJson(UserInfo instance) {
 
   writeNotNull('password', instance.password);
   val['baseInfo'] = instance.baseInfo;
-  val['extendInfo'] = instance.extendInfo;
+  writeNotNull('extendInfo', instance.extendInfo);
   val['loginInfo'] = instance.loginInfo;
   return val;
 }
@@ -59,7 +59,7 @@ Map<String, dynamic> _$BaseInfoToJson(BaseInfo instance) {
   }
 
   writeNotNull('nickName', instance.nickName);
-  val['name'] = instance.name;
+  writeNotNull('name', instance.name);
   val['gender'] = instance.gender;
   writeNotNull('avatarUri', instance.avatarUri);
   val['birthday'] = instance.birthday;

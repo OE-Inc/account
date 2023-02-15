@@ -39,8 +39,8 @@ Map<String, dynamic> _$LoginInfoToJson(LoginInfo instance) {
   writeNotNull('password', instance.password);
   val['termInfo'] = instance.termInfo;
   val['prefer'] = instance.prefer;
-  val['pushInfo'] = instance.pushInfo;
-  val['clientInfo'] = instance.clientInfo;
+  writeNotNull('pushInfo', instance.pushInfo);
+  writeNotNull('clientInfo', instance.clientInfo);
   return val;
 }
 
@@ -148,11 +148,20 @@ ClientInfo _$ClientInfoFromJson(Map<String, dynamic> json) => ClientInfo()
       ? null
       : App.fromJson(json['app'] as Map<String, dynamic>);
 
-Map<String, dynamic> _$ClientInfoToJson(ClientInfo instance) =>
-    <String, dynamic>{
-      'account': instance.account,
-      'app': instance.app,
-    };
+Map<String, dynamic> _$ClientInfoToJson(ClientInfo instance) {
+  final val = <String, dynamic>{
+    'account': instance.account,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('app', instance.app);
+  return val;
+}
 
 AccountInfo _$AccountInfoFromJson(Map<String, dynamic> json) {
   $checkKeys(

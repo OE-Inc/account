@@ -13,7 +13,7 @@ part 'token_info.g.dart';
 class TokenInfo implements Jsonable {
 
   String userId = "00000000-0000-0000-0000-000000000000";
-  @JsonKey(disallowNullValue: false) Tokens tokens = Tokens();
+  @JsonKey(disallowNullValue: false, includeIfNull: false) Tokens tokens = Tokens();
 
   TokenInfo();
 

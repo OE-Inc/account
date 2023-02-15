@@ -15,8 +15,8 @@ class LoginInfo implements Jsonable {
   @JsonKey(disallowNullValue: true) String? password;
   @JsonKey(disallowNullValue: true) TermInfo termInfo = new TermInfo();
   Prefer prefer = new Prefer();
-  @JsonKey(disallowNullValue: false) PushInfo? pushInfo;
-  @JsonKey(disallowNullValue: false) ClientInfo? clientInfo = new ClientInfo();
+  @JsonKey(disallowNullValue: false, includeIfNull: false) PushInfo? pushInfo;
+  @JsonKey(disallowNullValue: false, includeIfNull: false) ClientInfo? clientInfo = new ClientInfo();
 
   LoginInfo();
 
@@ -77,7 +77,7 @@ class PushInfo implements Jsonable {
 @JsonSerializable()
 class ClientInfo implements Jsonable {
   AccountInfo account = new AccountInfo();
-  @JsonKey(disallowNullValue: false) App? app = new App();
+  @JsonKey(disallowNullValue: false, includeIfNull: false) App? app = new App();
 
   ClientInfo();
 
