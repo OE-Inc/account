@@ -143,6 +143,15 @@ class AccountProcessor {
     await execute(request);
   }
 
+  /// 检查密码，注意，此 API 有严格频度限制。
+  Future<void> passwordValidation(String userId, String password) async {
+    await execute(HttpRequest(
+        Method.GET,
+        '${UrlFactory.baseUrl}/v2/user/users/$userId/password/validation',
+        data: { "password": password, },
+    ));
+  }
+
   void loginLocalUser(String localName) {
     var local = _accounts[LOCAL_LOGIN_ID];
     if(local == null) {
