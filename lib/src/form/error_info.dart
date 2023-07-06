@@ -17,7 +17,11 @@ class ErrorInfo extends Error implements Jsonable {
   @JsonKey(disallowNullValue: true)
   String errDispMsg = "";
 
-  ErrorInfo(this.rspCode, this.reason, this.errDispMsg);
+  ErrorInfo(int? rspCode, String? reason, String? errDispMsg):
+        rspCode = rspCode ?? 99999999,
+        reason = reason ?? "",
+        errDispMsg = errDispMsg ?? ""
+  ;
 
   factory ErrorInfo.fromJson(Map<String, dynamic> json) => _$ErrorInfoFromJson(json);
 
