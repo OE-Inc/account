@@ -31,6 +31,8 @@ class Tokens implements Jsonable {
   @JsonKey(disallowNullValue: true) int? expiresIn = 0;
   @JsonKey(disallowNullValue: true) int? loginUtc = 0;
 
+  bool get isExternalToken => (expiresIn ?? 0) > 0xFFFFFFFFFF;
+
   Tokens();
 
   @override

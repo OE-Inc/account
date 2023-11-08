@@ -247,13 +247,13 @@ class AccountProcessor {
     _bus?.fire(LoginSuccess(loginId));
   }
 
-  Future<void> logout(String loginId, { bool delete = false, String? password, String? envId, String? verificationCode }) async {
+  Future<void> logout(String loginId, { bool delete = false, String? password, String? envId, String? verificationCode, bool logoutExternal = false, }) async {
     var account = _accounts[loginId];
     if(account == null) {
       throw ErrorInfo(RspCode.NetworkLocal.NOT_LOGIN, "", "");
     }
 
-    if(account.isLocalUser) {
+    if(account.isLocalUser || (!logoutExternal && account.tokenInfo.tokens.isExternalToken)) {
       remove(loginId);
       _bus?.fire(LogoutSuccess(loginId));
       return;
