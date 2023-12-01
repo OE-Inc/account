@@ -1,6 +1,6 @@
 name: account
 description: Account project.
-version: 1.2.4
+version: 1.2.5
 homepage: https://www.oecore.com
 
 environment:
@@ -10,8 +10,8 @@ dependencies:
   flutter:
     sdk: flutter
   json_annotation: ^4.0.0
-  uuid: ^3.0.1
-  sprintf: ^6.0.0
+  uuid: ^4.0.1
+  sprintf: ^7.0.0
   utils:
     git: https://github.com/OE-Inc/utils.git
   event_bus: ^2.0.0
