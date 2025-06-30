@@ -90,21 +90,28 @@ class AccountProcessor {
   }
 
   /// 请求发送验证码流程, 返回值可能是：
-  ///   Map<String, dynamic>: 请求成功，包含"rspCode"、"expiresIn"和"envId"
+  ///   Map<String, dynamic>: 请求成功，包含"rspCode"、"expiresIn"和"envId", 某些情况下还有 "code"
   ///
   /// 失败则会抛出异常
-  Future<Map<String, dynamic>> ownerValidate(String authTo, {String? packageId}) async {
+  Future<Map<String, dynamic>> ownerValidate(String authTo, {
+    String? packageId,
+    String? token,
+    String? tokenType,
+    String? envId,
+  }) async {
 
     var params = {
       "authTo": authTo,
-      "type": "owner"
+      "type": "owner",
+      if (token != null) "token": token,
+      if (tokenType != null) "tokenType": tokenType,
+      if (packageId != null) "packageId": packageId,
     };
-    if(packageId != null) {
-      params["packageId"] = packageId;
-    }
+
+    envId ??= Account.terminalId;
     var request = HttpRequest(
       Method.GET,
-      UrlFactory.getOwnerUrl(Account.terminalId),
+      UrlFactory.getOwnerUrl(envId),
       queryParams: params
     );
     var rsp = await execute(request);
@@ -116,12 +123,16 @@ class AccountProcessor {
     }
 
     var expiresIn = env["expiresIn"];
-    var envId = env["envId"];
+    envId = env["envId"] ?? envId;
+
     if(expiresIn is int && expiresIn > 0) {
       return {
         "rspCode": rspCode,
         "expiresIn": expiresIn,
-        "envId": envId == null? Account.terminalId : envId
+        "envId": envId,
+
+        // 对于 token 有效的，可能会直接将 code 带回来，从而在后续流程直接用。
+        "code": env['code'],
       };
     }
 
