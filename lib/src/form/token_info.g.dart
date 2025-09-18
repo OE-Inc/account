@@ -11,9 +11,9 @@ TokenInfo _$TokenInfoFromJson(Map<String, dynamic> json) => TokenInfo()
   ..tokens = Tokens.fromJson(json['tokens'] as Map<String, dynamic>);
 
 Map<String, dynamic> _$TokenInfoToJson(TokenInfo instance) => <String, dynamic>{
-      'userId': instance.userId,
-      'tokens': instance.tokens,
-    };
+  'userId': instance.userId,
+  'tokens': instance.tokens,
+};
 
 Tokens _$TokensFromJson(Map<String, dynamic> json) {
   $checkKeys(
@@ -23,7 +23,7 @@ Tokens _$TokensFromJson(Map<String, dynamic> json) {
       'refreshToken',
       'permissions',
       'expiresIn',
-      'loginUtc'
+      'loginUtc',
     ],
   );
   return Tokens()
@@ -32,23 +32,14 @@ Tokens _$TokensFromJson(Map<String, dynamic> json) {
     ..permissions = (json['permissions'] as List<dynamic>?)
         ?.map((e) => e as String)
         .toList()
-    ..expiresIn = json['expiresIn'] as int?
-    ..loginUtc = json['loginUtc'] as int?;
+    ..expiresIn = (json['expiresIn'] as num?)?.toInt()
+    ..loginUtc = (json['loginUtc'] as num?)?.toInt();
 }
 
-Map<String, dynamic> _$TokensToJson(Tokens instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('accessToken', instance.accessToken);
-  writeNotNull('refreshToken', instance.refreshToken);
-  writeNotNull('permissions', instance.permissions);
-  writeNotNull('expiresIn', instance.expiresIn);
-  writeNotNull('loginUtc', instance.loginUtc);
-  return val;
-}
+Map<String, dynamic> _$TokensToJson(Tokens instance) => <String, dynamic>{
+  'accessToken': ?instance.accessToken,
+  'refreshToken': ?instance.refreshToken,
+  'permissions': ?instance.permissions,
+  'expiresIn': ?instance.expiresIn,
+  'loginUtc': ?instance.loginUtc,
+};

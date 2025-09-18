@@ -13,7 +13,7 @@ UpdateUserInfo _$UpdateUserInfoFromJson(Map<String, dynamic> json) {
       'accessToken',
       'baseInfo',
       'extendInfo',
-      'loginInfo'
+      'loginInfo',
     ],
   );
   return UpdateUserInfo()
@@ -29,18 +29,10 @@ UpdateUserInfo _$UpdateUserInfoFromJson(Map<String, dynamic> json) {
         : Login.fromJson(json['loginInfo'] as Map<String, dynamic>);
 }
 
-Map<String, dynamic> _$UpdateUserInfoToJson(UpdateUserInfo instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('accessToken', instance.accessToken);
-  writeNotNull('baseInfo', instance.baseInfo);
-  writeNotNull('extendInfo', instance.extendInfo);
-  writeNotNull('loginInfo', instance.loginInfo);
-  return val;
-}
+Map<String, dynamic> _$UpdateUserInfoToJson(UpdateUserInfo instance) =>
+    <String, dynamic>{
+      'accessToken': ?instance.accessToken,
+      'baseInfo': ?instance.baseInfo,
+      'extendInfo': ?instance.extendInfo,
+      'loginInfo': ?instance.loginInfo,
+    };

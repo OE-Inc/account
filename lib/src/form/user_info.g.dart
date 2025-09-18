@@ -7,10 +7,7 @@ part of 'user_info.dart';
 // **************************************************************************
 
 UserInfo _$UserInfoFromJson(Map<String, dynamic> json) {
-  $checkKeys(
-    json,
-    disallowNullValues: const ['password'],
-  );
+  $checkKeys(json, disallowNullValues: const ['password']);
   return UserInfo()
     ..password = json['password'] as String?
     ..baseInfo = BaseInfo.fromJson(json['baseInfo'] as Map<String, dynamic>)
@@ -20,21 +17,12 @@ UserInfo _$UserInfoFromJson(Map<String, dynamic> json) {
     ..loginInfo = Login.fromJson(json['loginInfo'] as Map<String, dynamic>);
 }
 
-Map<String, dynamic> _$UserInfoToJson(UserInfo instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('password', instance.password);
-  val['baseInfo'] = instance.baseInfo;
-  writeNotNull('extendInfo', instance.extendInfo);
-  val['loginInfo'] = instance.loginInfo;
-  return val;
-}
+Map<String, dynamic> _$UserInfoToJson(UserInfo instance) => <String, dynamic>{
+  'password': ?instance.password,
+  'baseInfo': instance.baseInfo,
+  'extendInfo': ?instance.extendInfo,
+  'loginInfo': instance.loginInfo,
+};
 
 BaseInfo _$BaseInfoFromJson(Map<String, dynamic> json) {
   $checkKeys(
@@ -46,25 +34,16 @@ BaseInfo _$BaseInfoFromJson(Map<String, dynamic> json) {
     ..name = json['name'] as String?
     ..gender = json['gender'] as String
     ..avatarUri = json['avatarUri'] as String?
-    ..birthday = json['birthday'] as int;
+    ..birthday = (json['birthday'] as num).toInt();
 }
 
-Map<String, dynamic> _$BaseInfoToJson(BaseInfo instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('nickName', instance.nickName);
-  writeNotNull('name', instance.name);
-  val['gender'] = instance.gender;
-  writeNotNull('avatarUri', instance.avatarUri);
-  val['birthday'] = instance.birthday;
-  return val;
-}
+Map<String, dynamic> _$BaseInfoToJson(BaseInfo instance) => <String, dynamic>{
+  'nickName': ?instance.nickName,
+  'name': ?instance.name,
+  'gender': instance.gender,
+  'avatarUri': ?instance.avatarUri,
+  'birthday': instance.birthday,
+};
 
 ExtendInfo _$ExtendInfoFromJson(Map<String, dynamic> json) {
   $checkKeys(
@@ -74,7 +53,7 @@ ExtendInfo _$ExtendInfoFromJson(Map<String, dynamic> json) {
       'region',
       'province',
       'city',
-      'location'
+      'location',
     ],
   );
   return ExtendInfo()
@@ -85,48 +64,32 @@ ExtendInfo _$ExtendInfoFromJson(Map<String, dynamic> json) {
     ..location = json['location'] as String?;
 }
 
-Map<String, dynamic> _$ExtendInfoToJson(ExtendInfo instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('lang', instance.lang);
-  writeNotNull('region', instance.region);
-  writeNotNull('province', instance.province);
-  writeNotNull('city', instance.city);
-  writeNotNull('location', instance.location);
-  return val;
-}
+Map<String, dynamic> _$ExtendInfoToJson(ExtendInfo instance) =>
+    <String, dynamic>{
+      'lang': ?instance.lang,
+      'region': ?instance.region,
+      'province': ?instance.province,
+      'city': ?instance.city,
+      'location': ?instance.location,
+    };
 
 Login _$LoginFromJson(Map<String, dynamic> json) {
   $checkKeys(
     json,
-    disallowNullValues: const ['status', 'email', 'phone', 'createUtc'],
+    disallowNullValues: const ['status', 'email', 'phone', 'createUtc', 'mfa'],
   );
   return Login()
     ..status = json['status'] as String
     ..email = json['email'] as String?
     ..phone = json['phone'] as String?
-    ..createUtc = json['createUtc'] as int;
+    ..createUtc = (json['createUtc'] as num).toInt()
+    ..mfa = json['mfa'] as bool?;
 }
 
-Map<String, dynamic> _$LoginToJson(Login instance) {
-  final val = <String, dynamic>{
-    'status': instance.status,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('email', instance.email);
-  writeNotNull('phone', instance.phone);
-  val['createUtc'] = instance.createUtc;
-  return val;
-}
+Map<String, dynamic> _$LoginToJson(Login instance) => <String, dynamic>{
+  'status': instance.status,
+  'email': ?instance.email,
+  'phone': ?instance.phone,
+  'createUtc': instance.createUtc,
+  'mfa': ?instance.mfa,
+};

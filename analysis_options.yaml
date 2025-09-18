@@ -1,0 +1,4 @@
+
+linter:
+  rules:
+    use_null_aware_elements: true

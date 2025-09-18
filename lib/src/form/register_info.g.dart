@@ -7,10 +7,7 @@ part of 'register_info.dart';
 // **************************************************************************
 
 RegisterInfo _$RegisterInfoFromJson(Map<String, dynamic> json) {
-  $checkKeys(
-    json,
-    disallowNullValues: const ['packageId'],
-  );
+  $checkKeys(json, disallowNullValues: const ['packageId']);
   return RegisterInfo()
     ..env = Env.fromJson(json['env'] as Map<String, dynamic>)
     ..newUserInfo = json['newUserInfo'] == null
@@ -19,18 +16,9 @@ RegisterInfo _$RegisterInfoFromJson(Map<String, dynamic> json) {
     ..packageId = json['packageId'] as String?;
 }
 
-Map<String, dynamic> _$RegisterInfoToJson(RegisterInfo instance) {
-  final val = <String, dynamic>{
-    'env': instance.env,
-    'newUserInfo': instance.newUserInfo,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('packageId', instance.packageId);
-  return val;
-}
+Map<String, dynamic> _$RegisterInfoToJson(RegisterInfo instance) =>
+    <String, dynamic>{
+      'env': instance.env,
+      'newUserInfo': instance.newUserInfo,
+      'packageId': ?instance.packageId,
+    };

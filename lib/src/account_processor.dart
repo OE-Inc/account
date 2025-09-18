@@ -98,21 +98,23 @@ class AccountProcessor {
     String? token,
     String? tokenType,
     String? envId,
+    Map<String, dynamic>? additionalParam,
   }) async {
 
     var params = {
       "authTo": authTo,
       "type": "owner",
-      if (token != null) "token": token,
-      if (tokenType != null) "tokenType": tokenType,
-      if (packageId != null) "packageId": packageId,
+      "token": ?token,
+      "tokenType": ?tokenType,
+      "packageId": ?packageId,
+      ...?additionalParam,
     };
 
     envId ??= Account.terminalId;
     var request = HttpRequest(
       Method.GET,
       UrlFactory.getOwnerUrl(envId),
-      queryParams: params
+      queryParams: { 'body': params.toJson() },
     );
     var rsp = await execute(request);
 
@@ -212,7 +214,34 @@ class AccountProcessor {
     await pullUserInfo(user, userId);
   }
 
-  Future<void> login(String loginId, LoginInfo loginInfo) async {
+  Future<Map> getLoginEnv(String loginId, LoginInfo loginInfo, {
+    Map<String, dynamic>? additionalParam,
+  }) async {
+    if(LOCAL_USER_ID.toLowerCase() == loginId.toLowerCase()) {
+      return {};
+    }
+
+    var request = HttpRequest(
+        Method.GET,
+        "${UrlFactory.baseUrl}/v2/user/loginIds/$loginId/sessions/${Account.terminalId}/env?body=${Uri.encodeQueryComponent({
+          ...loginInfo.toJson(),
+          ...?additionalParam,
+        }.toJson())}",
+    );
+
+    // 404 的时候，表示服务器还不支持 env 检测，则直接跳过
+    try {
+      var rsp = await execute(request);
+      return rsp.response ?? {};
+    } catch (err) {
+      if (err is ErrorInfo && err.rspCode == 404) return {};
+      rethrow;
+    }
+  }
+
+  Future<void> login(String loginId, LoginInfo loginInfo, {
+    Map<String, dynamic>? additionalParam,
+  }) async {
     if(LOCAL_USER_ID.toLowerCase() == loginId.toLowerCase()) {
       return loginLocalUser(loginId);
     }
@@ -227,8 +256,10 @@ class AccountProcessor {
     var request = HttpRequest(
       Method.PUT,
       UrlFactory.getLoginUrl(loginId, Account.terminalId),
-      data: loginInfo.toJson()
-    );
+      data: {
+        ...loginInfo.toJson(),
+        ...?additionalParam,
+      });
 
     var loginUtc = DateTime.now().millisecondsSinceEpoch;
     var rsp = await execute(request);
@@ -258,7 +289,36 @@ class AccountProcessor {
     _bus?.fire(LoginSuccess(loginId));
   }
 
-  Future<void> logout(String loginId, { bool delete = false, String? password, String? envId, String? verificationCode, bool logoutExternal = false, }) async {
+  Future<void> deleteToken({
+    required String accessToken,
+    required String logoutAccessToken,
+    required String refreshToken,
+    required String userId,
+    required String terminalId,
+    Map<String, dynamic>? additionalParam,
+  }) async {
+    var request = HttpRequest(
+        Method.DELETE,
+        UrlFactory.getLogoutUrl(userId, terminalId),
+        data: {
+          "accessToken": accessToken,
+          "logoutAccessToken": logoutAccessToken,
+          "refreshToken": refreshToken,
+          ...?additionalParam,
+        }
+    );
+
+    await execute(request);
+  }
+
+  Future<void> logout(String loginId, {
+    bool delete = false,
+    String? password,
+    String? envId,
+    String? verificationCode,
+    bool logoutExternal = false,
+    Map<String, dynamic>? additionalParam,
+  }) async {
     var account = _accounts[loginId];
     if(account == null) {
       throw ErrorInfo(RspCode.NetworkLocal.NOT_LOGIN, "", "");
@@ -286,6 +346,8 @@ class AccountProcessor {
           "result": verificationCode,
         } else if (delete && password != null)
           "password": password,
+
+        ...?additionalParam,
       }
     );
 
@@ -432,6 +494,107 @@ class AccountProcessor {
           "newPassword": newPassword,
           "accessToken": accessToken,
         }
+    );
+
+    await execute(request);
+  }
+
+  /**
+  eg:
+  ```
+  [{
+      userId: 'a8263a17-8fca-f1b7-83cb-17c7c8cd4149',
+      termId: 'b15cbf7a-6437-4906-804b-2d1f8a380568',
+      clientId: '12345678-0000-0000-0000-000000000000',
+      packageId: 'com.oecore.rippLink',
+      termInfo: {
+        name: 'R-iMac',
+        os: 'macos',
+        v: 'Version 14.7 (Build 23H124)',
+        manu: 'apple',
+        model: 'iMac20,2'
+      },
+      prefer: { lang: 'zh', tz: 'Asia/Shanghai' },
+      accessToken: '2b6d237b-ec5e-4d40-8627-8c89ae01a980',
+      refreshToken: 'cd17e696-afee-4ebd-8c7c-f0ffcc017bb9'
+  }]
+  ```
+   */
+  Future<List<Map>> listTokens({
+    required String userId,
+    required String accessToken,
+    String? password,
+    Map<String, dynamic>? additionalParam,
+  }) async {
+    var request = HttpRequest(
+        Method.GET,
+        "${UrlFactory.baseUrl}/v2/user/users/$userId/tokens",
+        queryParams: {
+          'body': {
+            "accessToken": accessToken,
+            "password": ?password,
+            ...?additionalParam,
+          }.toJson()
+        }
+    );
+
+    var rsp = await execute(request);
+    return (rsp.response?['tokens'] as List).cast<Map>();
+  }
+
+  /**
+  eg:
+  ```
+  [
+    {
+      createUtc: 1757493446000,
+      term: {
+        name: 'R-iMac',
+        os: 'macos',
+        v: 'Version 14.7 (Build 23H124)',
+        manu: 'apple',
+        model: 'iMac20,2'
+      },
+      termId: '6beab0c3-fd2b-40fa-85ea-d9f38d256207',
+      trust: false,
+      userId: 'a8263a17-8fca-f1b7-83cb-17c7c8cd4149'
+    }
+  ]
+  ```
+   */
+  Future<List<Map>> listTerminals({
+    required String userId,
+    required String accessToken,
+    String? password,
+    Map<String, dynamic>? additionalParam,
+  }) async {
+    var request = HttpRequest(
+        Method.GET,
+        "${UrlFactory.baseUrl}/v2/user/users/$userId/terminals",
+        queryParams: {
+          "body": {
+            "accessToken": accessToken,
+            "password": ?password,
+            ...?additionalParam,
+          }.toJson(),
+        }
+    );
+
+    var rsp = await execute(request);
+    return (rsp.response?['terminals'] as List).cast<Map>();
+  }
+
+  Future<void> deleteTerminal({
+    required String userId,
+    required String accessToken,
+    required String terminalId,
+  }) async {
+    var request = HttpRequest(
+      Method.DELETE,
+      "${UrlFactory.baseUrl}/v2/user/users/$userId/terminals/$terminalId",
+      data: {
+        "accessToken": accessToken,
+      }
     );
 
     await execute(request);

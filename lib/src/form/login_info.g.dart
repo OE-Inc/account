@@ -25,24 +25,15 @@ LoginInfo _$LoginInfoFromJson(Map<String, dynamic> json) {
         : ClientInfo.fromJson(json['clientInfo'] as Map<String, dynamic>);
 }
 
-Map<String, dynamic> _$LoginInfoToJson(LoginInfo instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('clientId', instance.clientId);
-  writeNotNull('packageId', instance.packageId);
-  writeNotNull('password', instance.password);
-  val['termInfo'] = instance.termInfo;
-  val['prefer'] = instance.prefer;
-  writeNotNull('pushInfo', instance.pushInfo);
-  writeNotNull('clientInfo', instance.clientInfo);
-  return val;
-}
+Map<String, dynamic> _$LoginInfoToJson(LoginInfo instance) => <String, dynamic>{
+  'clientId': ?instance.clientId,
+  'packageId': ?instance.packageId,
+  'password': ?instance.password,
+  'termInfo': instance.termInfo,
+  'prefer': instance.prefer,
+  'pushInfo': ?instance.pushInfo,
+  'clientInfo': ?instance.clientInfo,
+};
 
 TermInfo _$TermInfoFromJson(Map<String, dynamic> json) {
   $checkKeys(
@@ -56,7 +47,7 @@ TermInfo _$TermInfoFromJson(Map<String, dynamic> json) {
       'manu',
       'model',
       'ip',
-      'id'
+      'id',
     ],
   );
   return TermInfo()
@@ -71,76 +62,43 @@ TermInfo _$TermInfoFromJson(Map<String, dynamic> json) {
     ..id = json['id'] as String?;
 }
 
-Map<String, dynamic> _$TermInfoToJson(TermInfo instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('name', instance.name);
-  writeNotNull('os', instance.os);
-  writeNotNull('ua', instance.ua);
-  writeNotNull('v', instance.v);
-  writeNotNull('rom', instance.rom);
-  writeNotNull('manu', instance.manu);
-  writeNotNull('model', instance.model);
-  writeNotNull('ip', instance.ip);
-  writeNotNull('id', instance.id);
-  return val;
-}
+Map<String, dynamic> _$TermInfoToJson(TermInfo instance) => <String, dynamic>{
+  'name': ?instance.name,
+  'os': ?instance.os,
+  'ua': ?instance.ua,
+  'v': ?instance.v,
+  'rom': ?instance.rom,
+  'manu': ?instance.manu,
+  'model': ?instance.model,
+  'ip': ?instance.ip,
+  'id': ?instance.id,
+};
 
 Prefer _$PreferFromJson(Map<String, dynamic> json) {
-  $checkKeys(
-    json,
-    disallowNullValues: const ['lang', 'region', 'tz'],
-  );
+  $checkKeys(json, disallowNullValues: const ['lang', 'region', 'tz']);
   return Prefer()
     ..lang = json['lang'] as String?
     ..region = json['region'] as String?
     ..tz = json['tz'] as String?;
 }
 
-Map<String, dynamic> _$PreferToJson(Prefer instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('lang', instance.lang);
-  writeNotNull('region', instance.region);
-  writeNotNull('tz', instance.tz);
-  return val;
-}
+Map<String, dynamic> _$PreferToJson(Prefer instance) => <String, dynamic>{
+  'lang': ?instance.lang,
+  'region': ?instance.region,
+  'tz': ?instance.tz,
+};
 
 PushInfo _$PushInfoFromJson(Map<String, dynamic> json) {
-  $checkKeys(
-    json,
-    disallowNullValues: const ['type', 'token'],
-  );
+  $checkKeys(json, disallowNullValues: const ['type', 'token']);
   return PushInfo()
     ..type = json['type'] as String?
     ..token = json['token'] as String?;
 }
 
-Map<String, dynamic> _$PushInfoToJson(PushInfo instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('type', instance.type);
-  writeNotNull('token', instance.token);
-  return val;
-}
+Map<String, dynamic> _$PushInfoToJson(PushInfo instance) => <String, dynamic>{
+  'type': ?instance.type,
+  'token': ?instance.token,
+};
 
 ClientInfo _$ClientInfoFromJson(Map<String, dynamic> json) => ClientInfo()
   ..account = AccountInfo.fromJson(json['account'] as Map<String, dynamic>)
@@ -148,62 +106,25 @@ ClientInfo _$ClientInfoFromJson(Map<String, dynamic> json) => ClientInfo()
       ? null
       : App.fromJson(json['app'] as Map<String, dynamic>);
 
-Map<String, dynamic> _$ClientInfoToJson(ClientInfo instance) {
-  final val = <String, dynamic>{
-    'account': instance.account,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('app', instance.app);
-  return val;
-}
+Map<String, dynamic> _$ClientInfoToJson(ClientInfo instance) =>
+    <String, dynamic>{'account': instance.account, 'app': ?instance.app};
 
 AccountInfo _$AccountInfoFromJson(Map<String, dynamic> json) {
-  $checkKeys(
-    json,
-    disallowNullValues: const ['v'],
-  );
+  $checkKeys(json, disallowNullValues: const ['v']);
   return AccountInfo()..v = json['v'] as String?;
 }
 
-Map<String, dynamic> _$AccountInfoToJson(AccountInfo instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('v', instance.v);
-  return val;
-}
+Map<String, dynamic> _$AccountInfoToJson(AccountInfo instance) =>
+    <String, dynamic>{'v': ?instance.v};
 
 App _$AppFromJson(Map<String, dynamic> json) {
-  $checkKeys(
-    json,
-    disallowNullValues: const ['v', 'appId'],
-  );
+  $checkKeys(json, disallowNullValues: const ['v', 'appId']);
   return App()
     ..v = json['v'] as String?
     ..appId = json['appId'] as String?;
 }
 
-Map<String, dynamic> _$AppToJson(App instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('v', instance.v);
-  writeNotNull('appId', instance.appId);
-  return val;
-}
+Map<String, dynamic> _$AppToJson(App instance) => <String, dynamic>{
+  'v': ?instance.v,
+  'appId': ?instance.appId,
+};

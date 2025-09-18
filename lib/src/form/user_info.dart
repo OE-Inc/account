@@ -63,6 +63,7 @@ class Login implements Jsonable {
   @JsonKey(disallowNullValue: true) String? email;
   @JsonKey(disallowNullValue: true) String? phone;
   @JsonKey(disallowNullValue: true) int createUtc = 0;
+  @JsonKey(disallowNullValue: true) bool? mfa = false;
 
   Login();
 
